@@ -63,33 +63,6 @@
                 <wwEditorIcon name="delete" small />
             </div>
         </div>
-        <div class="rest-api-api__row rest-api-api__input">
-            <label class="rest-api-api__label caption-s" for="rest-api-data"> Data </label>
-            <button class="ww-editor-button -primary -small m-auto-left" @click="addData" :disabled="!api.url">
-                Add data field
-            </button>
-        </div>
-        <div class="rest-api-api__row -space-between" v-for="(data, index) of api.data" :key="index">
-            <div class="rest-api-api__row-item">
-                <input
-                    type="text"
-                    class="rest-api-api__input caption-m ww-editor-input"
-                    placeholder="Key"
-                    v-model="data.key"
-                />
-            </div>
-            <div class="rest-api-api__row-item">
-                <input
-                    type="text"
-                    class="rest-api-api__input caption-m ww-editor-input"
-                    placeholder="value"
-                    v-model="data.value"
-                />
-            </div>
-            <div class="rest-api-api__input rest-api-api__button-delete" @click="deleteData(index)">
-                <wwEditorIcon name="delete" small />
-            </div>
-        </div>
     </div>
 </template>
 
@@ -116,7 +89,6 @@ export default {
                 name: undefined,
                 displayBy: undefined,
                 headers: [],
-                data: [],
             },
         };
     },
@@ -131,12 +103,6 @@ export default {
         },
         deleteHeader(index) {
             this.api.headers.splice(index, 1);
-        },
-        addData() {
-            this.api.data.push({ key: '', value: '' });
-        },
-        deleteData(index) {
-            this.api.data.splice(index, 1);
         },
     },
     created() {
@@ -181,7 +147,6 @@ export default {
             align-items: center;
             &.-space-between {
                 justify-content: space-between;
-                // padding: 0 var(--ww-spacing-05);
             }
             &-item {
                 display: flex;
