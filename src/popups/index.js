@@ -12,8 +12,8 @@ wwLib.wwPopups.addPopup('restApiWebhooksPopup', webhooksPopup);
 
 wwLib.wwPopups.addStory('REST_API_POPUP', {
     title: {
-        en: 'Rest API',
-        fr: 'Rest API',
+        en: 'REST API',
+        fr: 'REST API',
     },
     type: 'restApiSettingsPopup',
     size: wwLib.wwPopups.SIZES.MEDIUM,
@@ -21,8 +21,8 @@ wwLib.wwPopups.addStory('REST_API_POPUP', {
 
 wwLib.wwPopups.addStory('REST_API_APIS_POPUP', {
     title: {
-        en: 'Rest API - APIs',
-        fr: 'Rest API - APIs',
+        en: 'REST API - APIs',
+        fr: 'REST API - APIs',
     },
     type: 'restApiApisPopup',
     size: wwLib.wwPopups.SIZES.MEDIUM,
@@ -39,8 +39,8 @@ wwLib.wwPopups.addStory('REST_API_APIS_POPUP', {
 
 wwLib.wwPopups.addStory('REST_API_ADD_API_POPUP', {
     title: {
-        en: 'Rest API - Add API',
-        fr: 'Rest API - Ajouter une API',
+        en: 'REST API - Add API',
+        fr: 'REST API - Ajouter une API',
     },
     type: 'restApiApiPopup',
     size: wwLib.wwPopups.SIZES.MEDIUM,
@@ -56,8 +56,8 @@ wwLib.wwPopups.addStory('REST_API_ADD_API_POPUP', {
 
 wwLib.wwPopups.addStory('REST_API_EDIT_API_POPUP', {
     title: {
-        en: 'Rest API - Edit API',
-        fr: "Rest API - Editer l'API",
+        en: 'REST API - Edit API',
+        fr: "REST API - Editer l'API",
     },
     type: 'restApiApiPopup',
     size: wwLib.wwPopups.SIZES.MEDIUM,
@@ -73,8 +73,8 @@ wwLib.wwPopups.addStory('REST_API_EDIT_API_POPUP', {
 
 wwLib.wwPopups.addStory('REST_API_WEBHOOKS_POPUP', {
     title: {
-        en: 'Rest API - Webhooks',
-        fr: 'Rest API - Webhooks',
+        en: 'REST API - Webhooks',
+        fr: 'REST API - Webhooks',
     },
     type: 'restApiWebhooksPopup',
     size: wwLib.wwPopups.SIZES.MEDIUM,
@@ -90,8 +90,8 @@ wwLib.wwPopups.addStory('REST_API_WEBHOOKS_POPUP', {
 
 wwLib.wwPopups.addStory('REST_API_SYNCHRONIZATION_POPUP', {
     title: {
-        en: 'Rest API - Synchronization',
-        fr: 'Rest API - Synchronization',
+        en: 'REST API - Synchronization',
+        fr: 'REST API - Synchronization',
     },
     type: 'restApiSynchronizationPopup',
     size: wwLib.wwPopups.SIZES.MEDIUM,

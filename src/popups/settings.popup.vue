@@ -60,8 +60,8 @@ export default {
         async deletePlugin() {
             const confirm = await wwLib.wwModals.open({
                 title: {
-                    en: 'Delete plugin Rest API?',
-                    fr: 'Supprimer le plugin Rest API ?',
+                    en: 'Delete plugin REST API?',
+                    fr: 'Supprimer le plugin REST API ?',
                 },
                 text: {
                     en: 'Are you sure you want to delete the plugin from your website?',
