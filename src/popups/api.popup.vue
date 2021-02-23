@@ -79,10 +79,6 @@ export default {
     },
     data() {
         return {
-            directionOptions: [
-                { value: 'asc', label: 'Asc', default: true },
-                { value: 'desc', label: 'Desc' },
-            ],
             api: {
                 id: wwLib.wwUtils.getUid(),
                 url: undefined,
@@ -93,8 +89,13 @@ export default {
         };
     },
     watch: {
-        'api.url'() {
-            this.options.setButtonState('SAVE', this.api.url ? 'ok' : 'disabled');
+        isSetup() {
+            this.options.setButtonState('SAVE', this.isSetup ? 'ok' : 'disabled');
+        },
+    },
+    computed: {
+        isSetup() {
+            return !!this.api.url && !!this.api.url.length;
         },
     },
     methods: {
@@ -108,7 +109,7 @@ export default {
     created() {
         this.api = this.options.data.api || this.api;
         this.options.result.api = this.api;
-        this.options.setButtonState('SAVE', this.api.url ? 'ok' : 'disabled');
+        this.options.setButtonState('SAVE', this.isSetup ? 'ok' : 'disabled');
     },
 };
 </script>

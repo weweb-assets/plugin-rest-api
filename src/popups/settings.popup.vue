@@ -46,11 +46,7 @@ export default {
     data() {
         return {
             pluginId: undefined,
-            settings: {
-                privateData: {
-                    APIs: [],
-                },
-            },
+            settings: {},
         };
     },
     methods: {

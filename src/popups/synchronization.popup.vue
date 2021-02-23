@@ -50,9 +50,7 @@ export default {
             isFetching: false,
             apisFetching: [],
             settings: {
-                privateData: {
-                    APIs: [],
-                },
+                privateData: {},
             },
         };
     },
@@ -101,7 +99,10 @@ export default {
         },
     },
     created() {
-        this.settings = _.cloneDeep(this.options.data.settings || this.settings);
+        this.settings = this.options.data.settings;
+    },
+    mounted() {
+        if (this.options.data.isFirstTime) this.syncAll();
     },
 };
 </script>

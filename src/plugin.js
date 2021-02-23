@@ -8,7 +8,6 @@ export default {
         Data
     \================================================================================================*/
     settings: {
-        id: wwLib.wwUtils.getUid(),
         data: {},
         privateData: {
             APIs: [],
@@ -20,8 +19,12 @@ export default {
     \================================================================================================*/
     async init() {
         /* wwEditor:start */
-        const plugin = wwLib.wwPlugins.pluginRestApi;
-        if (plugin.id) plugin.settings = (await wwLib.wwPlugin.getSettings(plugin.id)) || this.settings;
+        const plugin = wwLib.wwPlugins.pluginAirtable;
+        plugin.settings = (await wwLib.wwPlugin.getSettings(plugin.id)) || this.settings;
+        if (!plugin.settings.privateData.APIs) {
+            plugin.settings.privateData.APIs = [];
+            this.sidebarButton();
+        }
         /* wwEditor:end */
     },
     /* wwEditor:start */
@@ -34,6 +37,7 @@ export default {
             await wwLib.wwPopups.open({
                 firstPage: settings.privateData.APIs.length ? 'REST_API_POPUP' : 'REST_API_APIS_POPUP',
                 data: {
+                    isFirstTime: !settings.privateData.APIs.length,
                     pluginId: id,
                     settings,
                 },
