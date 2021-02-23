@@ -19,7 +19,7 @@ export default {
     \================================================================================================*/
     async init() {
         /* wwEditor:start */
-        const plugin = wwLib.wwPlugins.pluginAirtable;
+        const plugin = wwLib.wwPlugins.pluginRestApi;
         plugin.settings = (await wwLib.wwPlugin.getSettings(plugin.id)) || this.settings;
         if (!plugin.settings.privateData.APIs) {
             plugin.settings.privateData.APIs = [];
