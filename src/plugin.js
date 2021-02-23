@@ -21,8 +21,8 @@ export default {
         /* wwEditor:start */
         const plugin = wwLib.wwPlugins.pluginRestApi;
         plugin.settings = (await wwLib.wwPlugin.getSettings(plugin.id)) || this.settings;
-        if (!plugin.settings.privateData.APIs) {
-            plugin.settings.privateData.APIs = [];
+        if (!plugin.settings.privateData.APIs) plugin.settings.privateData.APIs = [];
+        if (!plugin.settings.privateData.APIs.length) {
             this.sidebarButton();
         }
         /* wwEditor:end */
@@ -34,9 +34,10 @@ export default {
     async sidebarButton() {
         try {
             const { id, settings } = wwLib.wwPlugins.pluginRestApi;
+            const isSetup = !settings.privateData.APIs.length;
             const isFirstTime = !settings.privateData.APIs.length;
             await wwLib.wwPopups.open({
-                firstPage: settings.privateData.APIs.length ? 'REST_API_POPUP' : 'REST_API_APIS_POPUP',
+                firstPage: isSetup ? 'REST_API_POPUP' : 'REST_API_APIS_POPUP',
                 data: {
                     isFirstTime,
                     pluginId: id,
