@@ -22,7 +22,7 @@ export default {
         const plugin = wwLib.wwPlugins.pluginRestApi;
         plugin.settings = (await wwLib.wwPlugin.getSettings(plugin.id)) || this.settings;
         if (!plugin.settings.privateData.APIs) plugin.settings.privateData.APIs = [];
-        if (!plugin.settings.privateData.APIs.length) {
+        if (plugin.isNew && !plugin.settings.privateData.APIs.length) {
             this.sidebarButton();
         }
         /* wwEditor:end */
