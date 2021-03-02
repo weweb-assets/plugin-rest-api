@@ -33,8 +33,8 @@ export default {
     \================================================================================================*/
     async sidebarButton() {
         try {
-            const { id, settings } = wwLib.wwPlugins.pluginRestApi;
-            const isSetup = !!settings.privateData.APIs.length;
+            const { id, settings, isNew } = wwLib.wwPlugins.pluginRestApi;
+            const isSetup = !isNew;
             const isFirstTime = !settings.privateData.APIs.length;
             await wwLib.wwPopups.open({
                 firstPage: isSetup ? 'REST_API_POPUP' : 'REST_API_APIS_POPUP',
