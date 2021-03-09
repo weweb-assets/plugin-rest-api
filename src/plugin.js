@@ -47,6 +47,8 @@ export default {
         } catch (err) {
             wwLib.wwLog.error(err);
         }
+        wwLib.wwPlugins.pluginRestApi.isNew = false;
     },
+
     /* wwEditor:end */
 };

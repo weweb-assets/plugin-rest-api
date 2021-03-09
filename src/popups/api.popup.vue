@@ -14,7 +14,7 @@
         />
         <label class="rest-api-api__label caption-s" for="name-rest-api">
             Name
-            <div class="rest-api-api__label-required">optional</div>
+            <div class="rest-api-api__label-required">required</div>
         </label>
         <input
             type="text"
@@ -95,7 +95,7 @@ export default {
     },
     computed: {
         isSetup() {
-            return !!this.api.url && !!this.api.url.length;
+            return !!this.api.url && !!this.api.url.length && !!this.api.name && !!this.api.name.length;
         },
     },
     methods: {
