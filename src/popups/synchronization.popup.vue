@@ -71,25 +71,7 @@ export default {
         },
         async sync(api) {
             this.apiFetching(api, true);
-            try {
-                await wwLib.wwPlugin.saveCmsDataSet(this.settings.id, api.id, api.name, api.displayBy, 'RestApi');
-
-                wwLib.wwNotification.open({
-                    text: {
-                        en: `Api "${api.name}" succesfully fetched`,
-                    },
-                    color: 'green',
-                });
-            } catch (err) {
-                wwLib.wwNotification.open({
-                    text: {
-                        en: 'An error occured, please try again later.',
-                        fr: 'Une erreur est survenue. Veuillez réessayer plus tard.',
-                    },
-                    color: 'red',
-                });
-                wwLib.wwLog.error(err);
-            }
+            await wwLib.wwPlugins.pluginRestApi.sync(api);
             this.apiFetching(api, false);
         },
         async syncAll() {

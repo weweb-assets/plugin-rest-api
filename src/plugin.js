@@ -29,6 +29,33 @@ export default {
     },
     /* wwEditor:start */
     /*=============================================m_ÔÔ_m=============================================\
+        SYNCHRONIZE
+    \================================================================================================*/
+    async sync(api) {
+        try {
+            await wwLib.wwPlugin.saveCmsDataSet(this.settings.id, api.id, api.name, api.displayBy, 'RestApi');
+
+            wwLib.wwNotification.open({
+                text: {
+                    en: `Api "${api.name}" succesfully fetched`,
+                },
+                color: 'green',
+            });
+        } catch (err) {
+            wwLib.wwNotification.open({
+                text: {
+                    en: 'An error occured, please try again later.',
+                    fr: 'Une erreur est survenue. Veuillez réessayer plus tard.',
+                },
+                color: 'red',
+            });
+            wwLib.wwLog.error(err);
+        }
+    },
+    async syncAll() {
+        for (const api of this.settings.privateData.APIs) await this.sync(api);
+    },
+    /*=============================================m_ÔÔ_m=============================================\
         SIDEBAR POPUP
     \================================================================================================*/
     async sidebarButton() {
