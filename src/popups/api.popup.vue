@@ -1,17 +1,5 @@
 <template>
     <div class="ww-popup-rest-api-api">
-        <label class="rest-api-api__label caption-s" for="url-rest-api">
-            Url
-            <div class="rest-api-api__label-required">required</div>
-        </label>
-        <input
-            type="text"
-            name="url-rest-api"
-            class="rest-api-api__input caption-m ww-editor-input -large"
-            placeholder="https://api-url.com/endpoint"
-            v-model="api.url"
-            autofocus
-        />
         <label class="rest-api-api__label caption-s" for="name-rest-api">
             Name
             <div class="rest-api-api__label-required">required</div>
@@ -20,22 +8,55 @@
             type="text"
             name="name-rest-api"
             class="rest-api-api__input caption-m ww-editor-input -large"
-            placeholder="My Api "
+            placeholder="My Api"
             v-model="api.name"
-            :disabled="!api.url"
+            autofocus
         />
-        <label class="rest-api-api__label caption-s" for="display-by-rest-api">
-            Display by
+        <label class="rest-api-api__label caption-s" for="url-rest-api">
+            Url
+            <div class="rest-api-api__label-required">required</div>
+        </label>
+        <input
+            type="text"
+            name="url-rest-api"
+            class="caption-m ww-editor-input -large"
+            :class="{ 'rest-api-api__input': !options.data.isSubRequest }"
+            placeholder="https://api-url.com/endpoint"
+            v-model="api.url"
+        />
+        <template v-if="options.data.isSubRequest">
+            <span class="rest-api-api__description caption-s">
+                {{ urlDescription }}
+            </span>
+        </template>
+        <label class="rest-api-api__label caption-s" for="key-rest-api">
+            Key
             <div class="rest-api-api__label-required">optional</div>
         </label>
         <input
             type="text"
-            name="display-by-rest-api"
-            class="rest-api-api__input caption-m ww-editor-input -large"
-            placeholder="name"
-            v-model="api.displayBy"
-            :disabled="!api.url"
+            name="key-rest-api"
+            class="caption-m ww-editor-input -large"
+            placeholder="Enter a text"
+            v-model="api.key"
         />
+        <span class="rest-api-api__description caption-s">
+            If the returned JSON is not a list and is instead an object (maybe paginated), enter the key that contains
+            the results. Example: "results", "items", "objects", etc... (children via dot syntax supported)
+        </span>
+        <template v-if="!options.data.isSubRequest">
+            <label class="rest-api-api__label caption-s" for="display-by-rest-api">
+                Display by
+                <div class="rest-api-api__label-required">optional</div>
+            </label>
+            <input
+                type="text"
+                name="display-by-rest-api"
+                class="rest-api-api__input caption-m ww-editor-input -large"
+                placeholder="id"
+                v-model="api.displayBy"
+            />
+        </template>
         <div class="rest-api-api__row rest-api-api__input">
             <label class="rest-api-api__label caption-s" for="rest-api-headers"> Headers </label>
             <button class="ww-editor-button -primary -small m-auto-left" @click="addHeader" :disabled="!api.url">
@@ -63,6 +84,20 @@
                 <wwEditorIcon name="delete" small />
             </div>
         </div>
+        <div class="rest-api-api__row rest-api-api__input">
+            <label class="rest-api-api__label caption-s" for="rest-api-headers"> Sub requests </label>
+            <button class="ww-editor-button -primary -small m-auto-left" @click="addSubRequest" :disabled="!api.url">
+                Add sub request
+            </button>
+        </div>
+        <div class="rest-api-api__row -space-between" v-for="(subRequest, index) of api.subRequests" :key="index">
+            <div class="rest-api-api__row-item rest-api-api__input">
+                {{ subRequest.name }}
+            </div>
+            <div class="rest-api-api__input rest-api-api__button-delete" @click="deleteSubRequest(index)">
+                <wwEditorIcon name="delete" small />
+            </div>
+        </div>
     </div>
 </template>
 
@@ -79,12 +114,16 @@ export default {
     },
     data() {
         return {
+            urlDescription:
+                'Data from the previous request can be used with brackets. Example: "{{id}}", "https://api-url.com/{{id}}", etc... (children via dot syntax supported)',
             api: {
                 id: wwLib.wwUtils.getUid(),
-                url: undefined,
                 name: undefined,
+                url: undefined,
+                key: undefined,
                 displayBy: undefined,
                 headers: [],
+                subRequests: [],
             },
         };
     },
@@ -104,6 +143,22 @@ export default {
         },
         deleteHeader(index) {
             this.api.headers.splice(index, 1);
+        },
+        async addSubRequest() {
+            try {
+                const result = await wwLib.wwPopups.open({
+                    firstPage: 'REST_API_ADD_API_POPUP',
+                    data: {
+                        isSubRequest: true,
+                    },
+                });
+                this.api.subRequests.push(result.api);
+            } catch (err) {
+                wwLib.wwLog.error(err);
+            }
+        },
+        deleteSubRequest(index) {
+            this.api.subRequests.splice(index, 1);
         },
     },
     created() {
@@ -131,6 +186,13 @@ export default {
                 margin-left: auto;
                 color: var(--ww-color-dark-400);
             }
+        }
+        &__description {
+            display: flex;
+            align-items: center;
+            color: var(--ww-color-dark-500);
+            margin-top: var(--ww-spacing-01);
+            margin-bottom: var(--ww-spacing-03);
         }
         &__link {
             color: var(--ww-color-blue-500);
