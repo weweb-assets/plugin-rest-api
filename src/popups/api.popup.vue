@@ -94,7 +94,13 @@
             <div class="rest-api-api__row-item rest-api-api__input">
                 {{ subRequest.name }}
             </div>
-            <div class="rest-api-api__input rest-api-api__button-delete" @click="deleteSubRequest(index)">
+            <button
+                class="rest-api-api__input ww-editor-button -secondary -small m-auto-left"
+                @click="editSubRequest(index, subRequest)"
+            >
+                Edit
+            </button>
+            <div class="rest-api-api__input rest-api-api__button-delete m-left" @click="deleteSubRequest(index)">
                 <wwEditorIcon name="delete" small />
             </div>
         </div>
@@ -153,6 +159,20 @@ export default {
                     },
                 });
                 this.api.subRequests.push(result.api);
+            } catch (err) {
+                wwLib.wwLog.error(err);
+            }
+        },
+        async editSubRequest(index, api) {
+            try {
+                const result = await wwLib.wwPopups.open({
+                    firstPage: 'REST_API_EDIT_API_POPUP',
+                    data: {
+                        isSubRequest: true,
+                        api,
+                    },
+                });
+                this.api.subRequests.splice(index, 1, result.api);
             } catch (err) {
                 wwLib.wwLog.error(err);
             }
@@ -233,6 +253,9 @@ export default {
     }
     .m-auto-left {
         margin-left: auto;
+    }
+    .m-left {
+        margin-left: var(--ww-spacing-02);
     }
 }
 </style>
