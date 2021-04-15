@@ -12,6 +12,17 @@
             v-model="api.name"
             autofocus
         />
+        <label class="rest-api-api__label caption-s" for="method-rest-api">
+            Method
+            <div class="rest-api-api__label-required">required</div>
+        </label>
+        <wwEditorSelect
+            class="caption-m rest-api-api__input -full"
+            :options="methodOptions"
+            v-model="api.method"
+            placeholder="Select a method"
+            large
+        />
         <label class="rest-api-api__label caption-s" for="url-rest-api">
             Url
             <div class="rest-api-api__label-required">required</div>
@@ -122,9 +133,15 @@ export default {
         return {
             urlDescription:
                 'Data from the previous request can be used with brackets. Example: "{{id}}", "https://api-url.com/{{id}}", etc... (children via dot syntax supported)',
+            methodOptions: [
+                { value: 'GET', label: 'GET' },
+                { value: 'POST', label: 'POST' },
+                { value: 'PUT', label: 'PUT' },
+            ],
             api: {
                 id: wwLib.wwUtils.getUid(),
                 name: undefined,
+                method: 'GET',
                 url: undefined,
                 key: undefined,
                 displayBy: undefined,
