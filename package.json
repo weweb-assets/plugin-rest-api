@@ -4,15 +4,13 @@
         "type": "git",
         "url": "https://github.com/weweb-assets/plugin-rest-api"
     },
-    "version": "1.0.3",
+    "version": "2.0.0",
     "license": "MIT",
     "scripts": {
         "build": "weweb build",
         "serve": "weweb serve"
     },
-    "dependencies": {
-        "moment": "^2.29.1"
-    },
+    "dependencies": {},
     "devDependencies": {
         "@vue/eslint-config-prettier": "^6.0.0",
         "@weweb/cli": "latest",
