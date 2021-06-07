@@ -1,5 +1,5 @@
-<iframe src="https://www.youtube-nocookie.com/embed/76CMCIW-wGk" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+Use any REST API as a data source in WeWeb, enabling you to use any tool you think of!
 
-This plugin will add:
+This plugin will let you:
 
-REST API as a collection source
+- Use REST API endpoints as a collection source in WeWeb
