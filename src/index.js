@@ -1,7 +1,23 @@
-import plugin from './plugin.js';
+import Vue from 'vue';
+/* wwEditor:start */
+import './components/CollectionEdit.vue';
+import './components/CollectionSummary.vue';
+/* wwEditor:end */
 
-const name = 'plugin-rest-api';
-
-wwLib.wwPluginsLoader.add(name, plugin);
-
-export default plugin;
+export default {
+    /*=============================================m_ÔÔ_m=============================================\
+        Plugin API
+    \================================================================================================*/
+    onLoad() {
+        Vue.prototype.$pluginRestAPI = this;
+    },
+    /*=============================================m_ÔÔ_m=============================================\
+        Collection API
+    \================================================================================================*/
+    /* wwEditor:start */
+    // eslint-disable-next-line no-unused-vars
+    async fetchCollection(_collection) {
+        return { data: null, error: null };
+    },
+    /* wwEditor:end */
+};
