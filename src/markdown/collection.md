@@ -1,3 +1,5 @@
-<iframe src="https://www.youtube-nocookie.com/embed/76CMCIW-wGk" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+⚠️ REST APIs are all different from each other. Please make sure to refer to the documentation of the API you're using.
 
-Select a table from a base to fetch your data.
+1. You must first select [the HTTP method](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods) required to use this API endpoint.
+2. Enter the whole URL required to fetch this API endpoint.
+3. Optionally, enter [HTTP headers](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers) required to fetch this API endpoint.
