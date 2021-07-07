@@ -3,49 +3,46 @@
         <wwEditorFormRow label="Method" required>
             <wwEditorSelect
                 :options="methodOptions"
-                :value="api.method"
-                @input="setProp('method', $event)"
+                :model-value="api.method"
                 placeholder="Select a method"
                 large
+                @update:modelValue="setProp('method', $event)"
             />
         </wwEditorFormRow>
         <wwEditorFormRow label="URL" required>
             <wwEditorFormInput
                 type="text"
                 name="url"
-                :value="api.url"
-                @input="setProp('url', $event)"
+                :model-value="api.url"
                 placeholder="https://api-url.com/endpoint"
-                v-on:keyup.native.enter="$emit('next')"
                 large
+                @update:modelValue="setProp('url', $event)"
             />
         </wwEditorFormRow>
         <wwEditorFormRow label="Headers">
-            <template slot="append-label">
-                <button class="ww-editor-button -primary -small m-auto-left m-bottom" @click="addHeader">
+            <template #append-label>
+                <button type="button" class="ww-editor-button -primary -small m-auto-left m-bottom" @click="addHeader">
                     Add header field
                 </button>
             </template>
             <div
-                class="rest-api-collection-edit__row -space-between m-bottom"
                 v-for="(header, index) in api.headers"
                 :key="index"
+                class="rest-api-collection-edit__row -space-between m-bottom"
             >
                 <wwEditorFormInput
                     type="text"
-                    :value="header.key"
-                    @input="setHeaderProp(index, { key: $event })"
+                    :model-value="header.key"
                     placeholder="Key"
-                    v-on:keyup.native.enter="$emit('next')"
+                    @update:modelValue="setHeaderProp(index, { key: $event })"
                 />
                 <wwEditorFormInput
                     type="text"
-                    :value="header.value"
-                    @input="setHeaderProp(index, { value: $event })"
+                    :model-value="header.value"
                     placeholder="Value"
-                    v-on:keyup.native.enter="$emit('next')"
+                    @update:modelValue="setHeaderProp(index, { value: $event })"
                 />
-                <button class="ww-editor-button -tertiary -small -icon -red" @click="deleteHeader(index)">
+                <button type="button" class="ww-editor-button -tertiary -small -icon -red" @click="deleteHeader(index)">
                     <wwEditorIcon class="ww-editor-button-icon" name="delete" small />
                 </button>
             </div>
@@ -56,9 +53,9 @@
 <script>
 export default {
     props: {
-        plugin: { type: Object, required: true },
         config: { type: Object, required: true },
     },
+    emits: ['update:config'],
     data() {
         return {
             methodOptions: [
@@ -68,18 +65,7 @@ export default {
             ],
         };
     },
-    watch: {
-        isSetup: {
-            immediate: true,
-            handler(value) {
-                this.$emit('update-is-valid', value);
-            },
-        },
-    },
     computed: {
-        isSetup() {
-            return !!this.api.method && !!this.api.url;
-        },
         api() {
             return {
                 method: 'GET',
@@ -106,7 +92,7 @@ export default {
             this.setProp('headers', headers);
         },
         setProp(key, value) {
-            this.$emit('update-config', { ...this.api, [key]: value });
+            this.$emit('update:config', { ...this.api, [key]: value });
         },
     },
 };
