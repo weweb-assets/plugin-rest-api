@@ -1,7 +1,7 @@
 <template>
     <div class="rest-api-collection-edit">
         <wwEditorFormRow label="Method" required>
-            <wwEditorSelect
+            <wwEditorInputTextSelect
                 :options="methodOptions"
                 :model-value="api.method"
                 placeholder="Select a method"
@@ -10,7 +10,7 @@
             />
         </wwEditorFormRow>
         <wwEditorFormRow label="URL" required>
-            <wwEditorFormInput
+            <wwEditorInputText
                 type="text"
                 name="url"
                 :model-value="api.url"
@@ -30,13 +30,13 @@
                 :key="index"
                 class="rest-api-collection-edit__row -space-between m-bottom"
             >
-                <wwEditorFormInput
+                <wwEditorInputText
                     type="text"
                     :model-value="header.key"
                     placeholder="Key"
                     @update:modelValue="setHeaderProp(index, { key: $event })"
                 />
-                <wwEditorFormInput
+                <wwEditorInputText
                     type="text"
                     :model-value="header.value"
                     placeholder="Value"
