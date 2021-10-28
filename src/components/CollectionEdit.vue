@@ -21,31 +21,111 @@
         </wwEditorFormRow>
         <wwEditorFormRow label="Headers">
             <template #append-label>
-                <button type="button" class="ww-editor-button -primary -small m-auto-left m-bottom" @click="addHeader">
-                    Add header field
+                <button type="button" class="ww-editor-button -icon -primary -small m-auto-left" @click="addHeader">
+                    <wwEditorIcon class="ww-editor-button-icon" name="add" small />
                 </button>
             </template>
             <div
                 v-for="(header, index) in api.headers"
                 :key="index"
-                class="rest-api-collection-edit__row -space-between m-bottom"
+                class="rest-api-collection-edit__row -space-between"
+                :class="{ 'm-top': index }"
             >
                 <wwEditorInputText
+                    class="rest-api-collection-edit__input"
                     type="text"
                     :model-value="header.key"
                     placeholder="Key"
+                    small
                     @update:modelValue="setHeaderProp(index, { key: $event })"
                 />
                 <wwEditorInputText
+                    class="rest-api-collection-edit__input"
                     type="text"
                     :model-value="header.value"
                     placeholder="Value"
+                    small
                     @update:modelValue="setHeaderProp(index, { value: $event })"
                 />
                 <button type="button" class="ww-editor-button -tertiary -small -icon -red" @click="deleteHeader(index)">
                     <wwEditorIcon class="ww-editor-button-icon" name="delete" small />
                 </button>
             </div>
+        </wwEditorFormRow>
+        <wwEditorFormRow label="Query">
+            <template #append-label>
+                <button type="button" class="ww-editor-button -icon -primary -small m-auto-left" @click="addQuery">
+                    <wwEditorIcon class="ww-editor-button-icon" name="add" small />
+                </button>
+            </template>
+            <div
+                v-for="(query, index) in api.queries"
+                :key="index"
+                class="rest-api-collection-edit__row -space-between"
+                :class="{ 'm-top': index }"
+            >
+                <wwEditorInputText
+                    class="rest-api-collection-edit__input"
+                    type="text"
+                    :model-value="query.key"
+                    placeholder="Key"
+                    small
+                    @update:modelValue="setQueryProp(index, { key: $event })"
+                />
+                <wwEditorInputText
+                    class="rest-api-collection-edit__input"
+                    type="text"
+                    :model-value="query.value"
+                    placeholder="Value"
+                    small
+                    @update:modelValue="setQueryProp(index, { value: $event })"
+                />
+                <button type="button" class="ww-editor-button -tertiary -small -icon -red" @click="deleteQuery(index)">
+                    <wwEditorIcon class="ww-editor-button-icon" name="delete" small />
+                </button>
+            </div>
+        </wwEditorFormRow>
+        <wwEditorFormRow v-if="isData" label="Data">
+            <template #append-label>
+                <button type="button" class="ww-editor-button -icon -primary -small m-auto-left" @click="addData">
+                    <wwEditorIcon class="ww-editor-button-icon" name="add" small />
+                </button>
+            </template>
+            <div
+                v-for="(data, index) in api.data"
+                :key="index"
+                class="rest-api-collection-edit__row -space-between"
+                :class="{ 'm-top': index }"
+            >
+                <wwEditorInputText
+                    class="rest-api-collection-edit__input"
+                    type="text"
+                    :model-value="data.key"
+                    placeholder="Key"
+                    small
+                    @update:modelValue="setDataProp(index, { key: $event })"
+                />
+                <wwEditorInputText
+                    class="rest-api-collection-edit__input"
+                    type="text"
+                    :model-value="data.value"
+                    placeholder="Value"
+                    small
+                    @update:modelValue="setDataProp(index, { value: $event })"
+                />
+                <button type="button" class="ww-editor-button -tertiary -small -icon -red" @click="deleteData(index)">
+                    <wwEditorIcon class="ww-editor-button-icon" name="delete" small />
+                </button>
+            </div>
+        </wwEditorFormRow>
+        <wwEditorFormRow label="Result key">
+            <wwEditorInputText
+                type="text"
+                :model-value="api.resultKey"
+                placeholder="result.key"
+                small
+                @update:modelValue="setProp('resultKey', $event)"
+            />
         </wwEditorFormRow>
     </div>
 </template>
@@ -62,6 +142,9 @@ export default {
                 { value: 'GET', label: 'GET' },
                 { value: 'POST', label: 'POST' },
                 { value: 'PUT', label: 'PUT' },
+                { value: 'PATCH', label: 'PATCH' },
+                { value: 'DELETE', label: 'DELETE' },
+                { value: 'OPTIONS', label: 'OPTIONS' },
             ],
         };
     },
@@ -71,25 +154,58 @@ export default {
                 method: 'GET',
                 url: undefined,
                 headers: [],
+                queries: [],
+                data: [],
+                resultKey: '',
                 ...this.config,
             };
         },
+        isData() {
+            return this.api.method !== 'GET' && this.api.method !== 'DELETE' && this.api.method !== 'OPTIONS';
+        },
     },
     methods: {
+        addArrayItem(path) {
+            const array = _.cloneDeep(this.api[path] || []);
+            array.push({ key: '', value: '' });
+            this.setProp(path, array);
+        },
+        setArrayItemProp(path, index, value) {
+            const array = _.cloneDeep(this.api[path]);
+            array.splice(index, 1, { ...array[index], ...value });
+            this.setProp(path, array);
+        },
+        deleteArrayItem(path, index) {
+            const array = _.cloneDeep(this.api[path]);
+            array.splice(index, 1);
+            this.setProp(path, array);
+        },
         addHeader() {
-            const headers = _.cloneDeep(this.api.headers || []);
-            headers.push({ key: '', value: '' });
-            this.setProp('headers', headers);
+            this.addArrayItem('headers');
         },
         setHeaderProp(index, value) {
-            const headers = _.cloneDeep(this.api.headers);
-            headers.splice(index, 1, { ...headers[index], ...value });
-            this.setProp('headers', headers);
+            this.setArrayItemProp('headers', index, value);
         },
         deleteHeader(index) {
-            const headers = _.cloneDeep(this.api.headers);
-            headers.splice(index, 1);
-            this.setProp('headers', headers);
+            this.deleteArrayItem('headers', index);
+        },
+        addQuery() {
+            this.addArrayItem('queries');
+        },
+        setQueryProp(index, value) {
+            this.setArrayItemProp('queries', index, value);
+        },
+        deleteQuery(index) {
+            this.deleteArrayItem('queries', index);
+        },
+        addData() {
+            this.addArrayItem('data');
+        },
+        setDataProp(index, value) {
+            this.setArrayItemProp('data', index, value);
+        },
+        deleteData(index) {
+            this.deleteArrayItem('data', index);
         },
         setProp(key, value) {
             this.$emit('update:config', { ...this.api, [key]: value });
@@ -109,11 +225,14 @@ export default {
             justify-content: space-between;
         }
     }
+    &__input {
+        width: calc(50% - 10px - var(--ww-spacing-02));
+    }
     .m-auto-left {
         margin-left: auto;
     }
-    .m-bottom {
-        margin-bottom: var(--ww-spacing-02);
+    .m-top {
+        margin-top: var(--ww-spacing-02);
     }
 }
 </style>
