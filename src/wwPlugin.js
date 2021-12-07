@@ -1,6 +1,7 @@
 /* wwEditor:start */
 import './components/CollectionEdit.vue';
 import './components/CollectionSummary.vue';
+import './components/Request.vue';
 /* wwEditor:end */
 
 export default {
@@ -13,4 +14,7 @@ export default {
         return { data: null, error: null };
     },
     /* wwEditor:end */
+    async request(url, method, data, params, headers) {
+        return await axios({ url, method, data, params, headers });
+    },
 };
