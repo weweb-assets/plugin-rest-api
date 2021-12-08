@@ -17,13 +17,13 @@
         @update:modelValue="setUrl"
     />
     <wwEditorInputRow
-        v-if="isFields"
+        v-if="isData"
         type="array"
-        :model-value="fields"
+        :model-value="data"
         label="Fields"
         bindable
-        @update:modelValue="setFields"
-        @add-item="setFields([...fields, {}])"
+        @update:modelValue="setData"
+        @add-item="setData([...data, {}])"
     >
         <template #default="{ item, setItem }">
             <wwEditorInputRow
@@ -77,11 +77,11 @@
     </wwEditorInputRow>
     <wwEditorInputRow
         type="array"
-        :model-value="query"
+        :model-value="queries"
         label="Query string"
         bindable
-        @update:modelValue="setQuery"
-        @add-item="setQuery([...query, {}])"
+        @update:modelValue="setQueries"
+        @add-item="setQueries([...queries, {}])"
     >
         <template #default="{ item, setItem }">
             <wwEditorInputRow
@@ -132,16 +132,16 @@ export default {
         method() {
             return this.args[1];
         },
-        fields() {
+        data() {
             return this.args[2] || [];
         },
         headers() {
             return this.args[3] || [];
         },
-        query() {
+        queries() {
             return this.args[4] || [];
         },
-        isFields() {
+        isData() {
             return ['POST', 'PUT', 'PATCH'].includes(this.method);
         },
     },
@@ -150,19 +150,19 @@ export default {
     },
     methods: {
         setUrl(url) {
-            this.$emit('update:args', [url, this.method, this.fields, this.headers, this.query]);
+            this.$emit('update:args', [url, this.method, this.data, this.headers, this.queries]);
         },
         setMethod(method) {
-            this.$emit('update:args', [this.url, method, this.fields, this.headers, this.query]);
+            this.$emit('update:args', [this.url, method, this.data, this.headers, this.queries]);
         },
-        setFields(fields) {
-            this.$emit('update:args', [this.url, this.method, fields, this.headers, this.query]);
+        setData(data) {
+            this.$emit('update:args', [this.url, this.method, data, this.headers, this.queries]);
         },
-        setQuery(query) {
-            this.$emit('update:args', [this.url, this.method, this.fields, this.headers, query]);
+        setQueries(queries) {
+            this.$emit('update:args', [this.url, this.method, this.data, this.headers, queries]);
         },
         setHeaders(headers) {
-            this.$emit('update:args', [this.url, this.method, this.fields, headers, this.query]);
+            this.$emit('update:args', [this.url, this.method, this.data, headers, this.queries]);
         },
     },
 };
