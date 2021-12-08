@@ -10,8 +10,8 @@ export default {
     },
     functions: [
         {
-            name: 'Request',
-            code: 'request',
+            name: 'Api Request',
+            code: 'apiRequest',
             parameters: [
                 { name: 'url', type: 'string' },
                 { name: 'method', type: 'string' },
@@ -21,7 +21,7 @@ export default {
             ],
             isAsync: true,
             /* wwEditor:start */
-            edit: () => import('./src/components/Request.vue'),
+            edit: () => import('./src/components/ApiRequest.vue'),
             getIsValid([url, method]) {
                 return !!url && !!method;
             },
