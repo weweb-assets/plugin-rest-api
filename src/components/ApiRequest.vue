@@ -17,6 +17,36 @@
         @update:modelValue="setUrl"
     />
     <wwEditorInputRow
+        v-if="isFields"
+        type="array"
+        :model-value="fields"
+        label="Fields"
+        bindable
+        @update:modelValue="setFields"
+        @add-item="setFields([...fields, {}])"
+    >
+        <template #default="{ item, setItem }">
+            <wwEditorInputRow
+                type="query"
+                :model-value="item.key"
+                label="Key"
+                placeholder="Enter a value"
+                bindable
+                small
+                @update:modelValue="setItem({ ...item, key: $event })"
+            />
+            <wwEditorInputRow
+                type="query"
+                :model-value="item.value"
+                label="Value"
+                placeholder="Enter a value"
+                bindable
+                small
+                @update:modelValue="setItem({ ...item, value: $event })"
+            />
+        </template>
+    </wwEditorInputRow>
+    <wwEditorInputRow
         label="Headers"
         type="array"
         :model-value="headers"
@@ -74,36 +104,6 @@
             />
         </template>
     </wwEditorInputRow>
-    <wwEditorInputRow
-        v-if="isFields"
-        type="array"
-        :model-value="fields"
-        label="Fields"
-        bindable
-        @update:modelValue="setFields"
-        @add-item="setFields([...fields, {}])"
-    >
-        <template #default="{ item, setItem }">
-            <wwEditorInputRow
-                type="query"
-                :model-value="item.key"
-                label="Key"
-                placeholder="Enter a value"
-                bindable
-                small
-                @update:modelValue="setItem({ ...item, key: $event })"
-            />
-            <wwEditorInputRow
-                type="query"
-                :model-value="item.value"
-                label="Value"
-                placeholder="Enter a value"
-                bindable
-                small
-                @update:modelValue="setItem({ ...item, value: $event })"
-            />
-        </template>
-    </wwEditorInputRow>
 </template>
 
 <script>
@@ -135,10 +135,10 @@ export default {
         fields() {
             return this.args[2] || [];
         },
-        query() {
+        headers() {
             return this.args[3] || [];
         },
-        headers() {
+        query() {
             return this.args[4] || [];
         },
         isFields() {
@@ -150,19 +150,19 @@ export default {
     },
     methods: {
         setUrl(url) {
-            this.$emit('update:args', [url, this.method, this.fields, this.query, this.headers]);
+            this.$emit('update:args', [url, this.method, this.fields, this.headers, this.query]);
         },
         setMethod(method) {
-            this.$emit('update:args', [this.url, method, this.fields, this.query, this.headers]);
+            this.$emit('update:args', [this.url, method, this.fields, this.headers, this.query]);
         },
         setFields(fields) {
-            this.$emit('update:args', [this.url, this.method, fields, this.query, this.headers]);
+            this.$emit('update:args', [this.url, this.method, fields, this.headers, this.query]);
         },
         setQuery(query) {
-            this.$emit('update:args', [this.url, this.method, this.fields, query, this.headers]);
+            this.$emit('update:args', [this.url, this.method, this.fields, this.headers, query]);
         },
         setHeaders(headers) {
-            this.$emit('update:args', [this.url, this.method, this.fields, this.query, headers]);
+            this.$emit('update:args', [this.url, this.method, this.fields, headers, this.query]);
         },
     },
 };

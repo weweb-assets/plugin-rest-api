@@ -15,9 +15,9 @@ export default {
             parameters: [
                 { name: 'url', type: 'string' },
                 { name: 'method', type: 'string' },
-                { name: 'fields', type: 'object', optional: true },
-                { name: 'query', type: 'object', optional: true },
-                { name: 'headers', type: 'object', optional: true },
+                { name: 'fields', type: 'array', optional: true },
+                { name: 'headers', type: 'array', optional: true },
+                { name: 'query', type: 'array', optional: true },
             ],
             isAsync: true,
             /* wwEditor:start */
