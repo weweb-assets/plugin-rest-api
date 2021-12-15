@@ -15,7 +15,7 @@ export default {
         return { data: null, error: null };
     },
     /* wwEditor:end */
-    async apiRequest(url, method, data, params, headers, dataType) {
+    async apiRequest(url, method, data, headers, params, dataType) {
         data = data.reduce((obj, item) => ({ ...obj, [item.key]: item.value }), {});
 
         switch (dataType) {
