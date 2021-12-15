@@ -104,13 +104,21 @@
             />
         </template>
     </wwEditorInputRow>
+    <wwEditorFormRow v-if="isData" label="Fields type">
+        <wwEditorInputTextSelect
+            :options="dataTypeOptions"
+            :model-value="dataType"
+            small
+            @update:modelValue="setDataType"
+        />
+    </wwEditorFormRow>
 </template>
 
 <script>
 export default {
     props: {
         plugin: { type: Object, required: true },
-        args: { type: Array, default: () => [null, null] },
+        args: { type: Array, default: () => [null, null, [], [], [], null] },
     },
     emits: ['update:args'],
     data() {
@@ -122,6 +130,11 @@ export default {
                 { label: 'PATCH', value: 'PATCH' },
                 { label: 'DELETE', value: 'DELETE' },
                 { label: 'OPTIONS', value: 'OPTIONS' },
+            ],
+            dataTypeOptions: [
+                { label: 'Default (application/json)', value: 'application/json', default: true },
+                { label: 'application/x-www-form-urlencoded', value: 'application/x-www-form-urlencoded' },
+                { label: 'multipart/form-data', value: 'multipart/form-data' },
             ],
         };
     },
@@ -141,6 +154,9 @@ export default {
         queries() {
             return this.args[4] || [];
         },
+        dataType() {
+            return this.args[5];
+        },
         isData() {
             return ['POST', 'PUT', 'PATCH'].includes(this.method);
         },
@@ -150,19 +166,22 @@ export default {
     },
     methods: {
         setUrl(url) {
-            this.$emit('update:args', [url, this.method, this.data, this.headers, this.queries]);
+            this.$emit('update:args', [url, this.method, this.data, this.headers, this.queries, this.dataType]);
         },
         setMethod(method) {
-            this.$emit('update:args', [this.url, method, this.data, this.headers, this.queries]);
+            this.$emit('update:args', [this.url, method, this.data, this.headers, this.queries, this.dataType]);
         },
         setData(data) {
-            this.$emit('update:args', [this.url, this.method, data, this.headers, this.queries]);
+            this.$emit('update:args', [this.url, this.method, data, this.headers, this.queries, this.dataType]);
         },
         setQueries(queries) {
-            this.$emit('update:args', [this.url, this.method, this.data, this.headers, queries]);
+            this.$emit('update:args', [this.url, this.method, this.data, this.headers, queries, this.dataType]);
         },
         setHeaders(headers) {
-            this.$emit('update:args', [this.url, this.method, this.data, headers, this.queries]);
+            this.$emit('update:args', [this.url, this.method, this.data, headers, this.queries, this.dataType]);
+        },
+        setDataType(dataType) {
+            this.$emit('update:args', [this.url, this.method, this.data, this.headers, this.queries, dataType]);
         },
     },
 };

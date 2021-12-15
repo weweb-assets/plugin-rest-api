@@ -18,6 +18,7 @@ export default {
                 { name: 'fields', type: 'array', optional: true },
                 { name: 'headers', type: 'array', optional: true },
                 { name: 'query', type: 'array', optional: true },
+                { name: 'fields type', type: 'string' },
             ],
             isAsync: true,
             /* wwEditor:start */

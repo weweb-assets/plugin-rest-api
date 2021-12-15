@@ -1,3 +1,4 @@
+import qs from 'qs';
 /* wwEditor:start */
 import './components/CollectionEdit.vue';
 import './components/CollectionSummary.vue';
@@ -14,19 +15,39 @@ export default {
         return { data: null, error: null };
     },
     /* wwEditor:end */
-    async apiRequest(url, method, data, params, headers) {
+    async apiRequest(url, method, data, params, headers, dataType) {
+        data = data.reduce((obj, item) => {
+            ({ ...obj, [item.key]: item.value });
+        }, {});
+
+        switch (dataType) {
+            case 'application/x-www-form-urlencoded': {
+                data = qs.stringify(data);
+                break;
+            }
+            case 'multipart/form-data': {
+                const formData = new FormData();
+                for (const key in data) formData.append(key, data[key]);
+                data = formData;
+                break;
+            }
+            default:
+                break;
+        }
+
         return await axios({
             url,
             method,
-            data: data.reduce((obj, item) => {
-                ({ ...obj, [item.key]: item.value });
-            }, {}),
+            data,
             params: params.reduce((obj, item) => {
                 ({ ...obj, [item.key]: item.value });
             }, {}),
-            headers: headers.reduce((obj, item) => {
-                ({ ...obj, [item.key]: item.value });
-            }, {}),
+            headers: {
+                'content-type': dataType,
+                ...headers.reduce((obj, item) => {
+                    ({ ...obj, [item.key]: item.value });
+                }, {}),
+            },
         });
     },
 };
