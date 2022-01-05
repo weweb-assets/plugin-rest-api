@@ -16,7 +16,7 @@ export default {
             try {
                 const { url, method, data, headers, queries, resultKey } = collection.config;
                 const response = await this.apiRequest(url, method, data, headers, queries);
-                return _.get(response.data, resultKey, response.data);
+                return { data: _.get(response.data, resultKey, response.data) };
             } catch (error) {
                 return { error };
             }
