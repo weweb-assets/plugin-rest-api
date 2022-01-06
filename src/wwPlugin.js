@@ -11,8 +11,18 @@ export default {
     \================================================================================================*/
     /* wwEditor:start */
     // eslint-disable-next-line no-unused-vars
-    async fetchCollection(_collection) {
-        return { data: null, error: null };
+    async fetchCollection(collection) {
+        if (collection.mode === 'dynamic') {
+            try {
+                const { url, method, data, headers, queries, resultKey } = collection.config;
+                const response = await this.apiRequest(url, method, data, headers, queries);
+                return { data: _.get(response.data, resultKey, response.data), error: null };
+            } catch (error) {
+                return { error };
+            }
+        } else {
+            return { data: null, error: null };
+        }
     },
     /* wwEditor:end */
     async apiRequest(url, method, data, headers, params, dataType) {
