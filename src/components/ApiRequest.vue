@@ -23,7 +23,7 @@
         label="Fields"
         bindable
         @update:modelValue="setData"
-        @add-item="setData([...data, {}])"
+        @add-item="setData([...(data || []), {}])"
     >
         <template #default="{ item, setItem }">
             <wwEditorInputRow
@@ -52,7 +52,7 @@
         :model-value="headers"
         bindable
         @update:modelValue="setHeaders"
-        @add-item="setHeaders([...headers, {}])"
+        @add-item="setHeaders([...(headers || []), {}])"
     >
         <template #default="{ item, setItem }">
             <wwEditorInputRow
@@ -81,7 +81,7 @@
         label="Query string"
         bindable
         @update:modelValue="setQueries"
-        @add-item="setQueries([...queries, {}])"
+        @add-item="setQueries([...(queries || []), {}])"
     >
         <template #default="{ item, setItem }">
             <wwEditorInputRow

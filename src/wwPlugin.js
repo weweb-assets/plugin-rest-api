@@ -26,7 +26,7 @@ export default {
     },
     /* wwEditor:end */
     async apiRequest(url, method, data, headers, params, dataType) {
-        data = data.reduce((obj, item) => ({ ...obj, [item.key]: item.value }), {});
+        data = (data || []).reduce((obj, item) => ({ ...obj, [item.key]: item.value }), {});
 
         switch (dataType) {
             case 'application/x-www-form-urlencoded': {
@@ -47,10 +47,10 @@ export default {
             url,
             method,
             data,
-            params: params.reduce((obj, item) => ({ ...obj, [item.key]: item.value }), {}),
+            params: (params || []).reduce((obj, item) => ({ ...obj, [item.key]: item.value }), {}),
             headers: {
                 'content-type': dataType,
-                ...headers.reduce((obj, item) => ({ ...obj, [item.key]: item.value }), {}),
+                ...(headers || []).reduce((obj, item) => ({ ...obj, [item.key]: item.value }), {}),
             },
         });
     },
