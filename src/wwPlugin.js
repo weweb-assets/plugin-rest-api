@@ -9,8 +9,6 @@ export default {
     /*=============================================m_ÔÔ_m=============================================\
         Collection API
     \================================================================================================*/
-    /* wwEditor:start */
-    // eslint-disable-next-line no-unused-vars
     async fetchCollection(collection) {
         if (collection.mode === 'dynamic') {
             try {
@@ -24,7 +22,6 @@ export default {
             return { data: null, error: null };
         }
     },
-    /* wwEditor:end */
     async apiRequest(url, method, data, headers, params, dataType) {
         data = (data || []).reduce((obj, item) => ({ ...obj, [item.key]: item.value }), {});
 
