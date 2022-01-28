@@ -46,7 +46,7 @@ export default {
             data,
             params: (params || []).reduce((obj, item) => ({ ...obj, [item.key]: item.value }), {}),
             headers: {
-                'content-type': dataType,
+                'content-type': dataType || 'application/json',
                 ...(headers || []).reduce((obj, item) => ({ ...obj, [item.key]: item.value }), {}),
             },
         });
