@@ -13,8 +13,8 @@ export default {
         if (collection.mode === 'dynamic') {
             try {
                 const { url, method, data, headers, queries, resultKey } = collection.config;
-                const response = await this.apiRequest(url, method, data, headers, queries);
-                return { data: _.get(response.data, resultKey, response.data), error: null };
+                const responseData = await this.apiRequest(url, method, data, headers, queries);
+                return { data: _.get(responseData, resultKey, responseData), error: null };
             } catch (error) {
                 return { error };
             }
@@ -40,7 +40,7 @@ export default {
                 break;
         }
 
-        return await axios({
+        const response = await axios({
             url,
             method,
             data,
@@ -50,5 +50,7 @@ export default {
                 ...(headers || []).reduce((obj, item) => ({ ...obj, [item.key]: item.value }), {}),
             },
         });
+
+        return response.data;
     },
 };
