@@ -40,6 +40,16 @@ export default {
                 break;
         }
 
+        switch (method) {
+            case 'OPTIONS':
+            case 'GET':
+            case 'DELETE':
+                data = undefined;
+                break;
+            default:
+                break;
+        }
+
         const response = await axios({
             url,
             method,
