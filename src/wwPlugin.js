@@ -15,8 +15,10 @@ export default {
                 const { url, method, data, headers, queries, resultKey } = collection.config;
                 const responseData = await this.apiRequest(url, method, data, headers, queries);
                 return { data: _.get(responseData, resultKey, responseData), error: null };
-            } catch (error) {
-                return { error };
+            } catch (err) {
+                return {
+                    error: Object.getOwnPropertyNames(err).reduce((obj, key) => ({ ...obj, [key]: err[key] }), {}),
+                };
             }
         } else {
             return { data: null, error: null };
