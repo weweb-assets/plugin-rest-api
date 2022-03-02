@@ -27,15 +27,18 @@ export default {
     async apiRequest(url, method, data, headers, params, dataType, wwUtils) {
         /* wwEditor:start */
         const payload = computePayload(method, data, headers, params, dataType);
-        wwUtils.log({ label: 'Request', preview: `${method} ${url}` });
-        wwUtils.log({
-            label: 'Payload',
-            preview: {
-                Data: payload.data,
-                Headers: payload.headers,
-                'Query string': payload.params,
-            },
-        });
+        if (wwUtils) {
+            wwUtils.log({ label: 'Request', preview: `${method} ${url}` });
+            wwUtils.log({
+                label: 'Payload',
+                preview: {
+                    Data: payload.data,
+                    Headers: payload.headers,
+                    'Query string': payload.params,
+                },
+            });
+        }
+
         /* wwEditor:end */
         return this._apiRequest(url, method, data, headers, params, dataType);
     },
