@@ -10,7 +10,7 @@ export default {
         Collection API
     \================================================================================================*/
     async fetchCollection(collection) {
-        if (collection.mode === 'dynamic') {
+        if (collection.mode === 'dynamic' && collection.config.isThroughServer) {
             try {
                 const { url, method, data, headers, queries, resultKey } = collection.config;
                 const responseData = await this._apiRequest(url, method, data, headers, queries);
@@ -24,7 +24,7 @@ export default {
             return { data: null, error: null };
         }
     },
-    async apiRequest(url, method, data, headers, params, dataType, wwUtils) {
+    async apiRequest(url, method, data, headers, params, dataType, isThroughServer, wwUtils) {
         /* wwEditor:start */
         const payload = computePayload(method, data, headers, params, dataType);
         if (wwUtils) {
@@ -40,7 +40,19 @@ export default {
         }
 
         /* wwEditor:end */
-        return this._apiRequest(url, method, data, headers, params, dataType);
+        if (isThroughServer) {
+            const websiteId = wwLib.wwWebsiteData.getInfo().id;
+            const pluginURL = wwLib.wwApiRequests._getPluginsUrl();
+            return await axios.post(`${pluginURL}/designs/${websiteId}/rest-api/request`, {
+                url,
+                method,
+                data: payload.data,
+                params: payload.params,
+                headers: payload.headers,
+            });
+        } else {
+            return this._apiRequest(url, method, data, headers, params, dataType);
+        }
     },
     async _apiRequest(url, method, data, headers, params, dataType) {
         const payload = computePayload(method, data, headers, params, dataType);

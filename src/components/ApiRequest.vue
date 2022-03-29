@@ -112,13 +112,20 @@
             @update:modelValue="setDataType"
         />
     </wwEditorFormRow>
+    <wwEditorFormRow>
+        <div class="flex items-center">
+            <wwEditorInputSwitch :model-value="isThroughServer" @update:modelValue="setIsThroughServer" />
+            <div class="ww-typo-caption ml-2">Make this request through a server</div>
+            <wwEditorQuestionMark tooltip-position="top-right" tooltip-name="rest-api-through-server" class="ml-2" />
+        </div>
+    </wwEditorFormRow>
 </template>
 
 <script>
 export default {
     props: {
         plugin: { type: Object, required: true },
-        args: { type: Array, default: () => [null, null, [], [], [], null] },
+        args: { type: Array, default: () => [null, null, [], [], [], null, false] },
     },
     emits: ['update:args'],
     data() {
@@ -157,6 +164,9 @@ export default {
         dataType() {
             return this.args[5];
         },
+        isThroughServer() {
+            return this.args[6] || false;
+        },
         isData() {
             return ['POST', 'PUT', 'PATCH'].includes(this.method);
         },
@@ -166,22 +176,81 @@ export default {
     },
     methods: {
         setUrl(url) {
-            this.$emit('update:args', [url, this.method, this.data, this.headers, this.queries, this.dataType]);
+            this.$emit('update:args', [
+                url,
+                this.method,
+                this.data,
+                this.headers,
+                this.queries,
+                this.dataType,
+                this.isThroughServer,
+            ]);
         },
         setMethod(method) {
-            this.$emit('update:args', [this.url, method, this.data, this.headers, this.queries, this.dataType]);
+            this.$emit('update:args', [
+                this.url,
+                method,
+                this.data,
+                this.headers,
+                this.queries,
+                this.dataType,
+                this.isThroughServer,
+            ]);
         },
         setData(data) {
-            this.$emit('update:args', [this.url, this.method, data, this.headers, this.queries, this.dataType]);
+            this.$emit('update:args', [
+                this.url,
+                this.method,
+                data,
+                this.headers,
+                this.queries,
+                this.dataType,
+                this.isThroughServer,
+            ]);
         },
         setQueries(queries) {
-            this.$emit('update:args', [this.url, this.method, this.data, this.headers, queries, this.dataType]);
+            this.$emit('update:args', [
+                this.url,
+                this.method,
+                this.data,
+                this.headers,
+                queries,
+                this.dataType,
+                this.isThroughServer,
+            ]);
         },
         setHeaders(headers) {
-            this.$emit('update:args', [this.url, this.method, this.data, headers, this.queries, this.dataType]);
+            this.$emit('update:args', [
+                this.url,
+                this.method,
+                this.data,
+                headers,
+                this.queries,
+                this.dataType,
+                this.isThroughServer,
+            ]);
         },
         setDataType(dataType) {
-            this.$emit('update:args', [this.url, this.method, this.data, this.headers, this.queries, dataType]);
+            this.$emit('update:args', [
+                this.url,
+                this.method,
+                this.data,
+                this.headers,
+                this.queries,
+                dataType,
+                this.isThroughServer,
+            ]);
+        },
+        setIsThroughServer(isThroughServer) {
+            this.$emit('update:args', [
+                this.url,
+                this.method,
+                this.data,
+                this.headers,
+                this.queries,
+                this.dataType,
+                isThroughServer,
+            ]);
         },
     },
 };

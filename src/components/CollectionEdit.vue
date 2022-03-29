@@ -115,6 +115,20 @@
                 @update:modelValue="setProp('resultKey', $event)"
             />
         </wwEditorFormRow>
+        <wwEditorFormRow v-if="collection.mode === 'dynamic'">
+            <div class="flex items-center">
+                <wwEditorInputSwitch
+                    :model-value="api.isThroughServer"
+                    @update:modelValue="setProp('isThroughServer', $event)"
+                />
+                <div class="ww-typo-caption ml-2">Make this request through a server</div>
+                <wwEditorQuestionMark
+                    tooltip-position="top-right"
+                    tooltip-name="rest-api-through-server"
+                    class="ml-2"
+                />
+            </div>
+        </wwEditorFormRow>
     </div>
 </template>
 
@@ -144,6 +158,7 @@ export default {
                 queries: [],
                 data: [],
                 resultKey: '',
+                isThroughServer: false,
                 ...this.config,
             };
         },
