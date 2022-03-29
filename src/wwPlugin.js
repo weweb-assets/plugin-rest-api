@@ -10,7 +10,7 @@ export default {
         Collection API
     \================================================================================================*/
     async fetchCollection(collection) {
-        if (collection.mode === 'dynamic' && collection.config.isThroughServer) {
+        if (collection.mode === 'dynamic' && !collection.config.isThroughServer) {
             try {
                 const { url, method, data, headers, queries, resultKey } = collection.config;
                 const responseData = await this._apiRequest(url, method, data, headers, queries);
@@ -51,7 +51,7 @@ export default {
                 headers: payload.headers,
             });
         } else {
-            return this._apiRequest(url, method, data, headers, params, dataType);
+            return await this._apiRequest(url, method, data, headers, params, dataType);
         }
     },
     async _apiRequest(url, method, data, headers, params, dataType) {
