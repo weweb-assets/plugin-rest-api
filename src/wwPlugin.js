@@ -46,9 +46,9 @@ export default {
             return await axios.post(`${pluginURL}/designs/${websiteId}/rest-api/request`, {
                 url,
                 method,
-                data: payload.data,
-                params: payload.params,
-                headers: payload.headers,
+                data,
+                params,
+                headers,
             });
         } else {
             return await this._apiRequest(url, method, data, headers, params, dataType);
