@@ -67,6 +67,16 @@ export default {
 
         return response.data;
     },
+    /* wwEditor:start */
+    async getCollectionErrorDetails(collection) {
+        return (
+            collection.error &&
+            collection.error.message &&
+            collection.error.message === 'Network Error' &&
+            '⚠️ There is a CORS issue. You may need to contact the administrator of the API to allow “weweb.io” domain to make requests. If this is not possible. Consider making this request through a server 👇'
+        );
+    },
+    /* wwEditor:end */
 };
 
 function computePayload(method, data, headers, params, dataType) {
