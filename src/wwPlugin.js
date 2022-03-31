@@ -68,7 +68,7 @@ export default {
         return response.data;
     },
     /* wwEditor:start */
-    async getCollectionErrorDetails(collection) {
+    getCollectionErrorDetails(collection) {
         return (
             collection.error &&
             collection.error.message &&
