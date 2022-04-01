@@ -10,7 +10,7 @@ export default {
         Collection API
     \================================================================================================*/
     async fetchCollection(collection) {
-        if (collection.mode === 'dynamic') {
+        if (collection.mode === 'dynamic' && !collection.config.isThroughServer) {
             try {
                 const { url, method, data, headers, queries, resultKey } = collection.config;
                 const responseData = await this._apiRequest(url, method, data, headers, queries);
@@ -24,7 +24,7 @@ export default {
             return { data: null, error: null };
         }
     },
-    async apiRequest(url, method, data, headers, params, dataType, wwUtils) {
+    async apiRequest(url, method, data, headers, params, dataType, isThroughServer, wwUtils) {
         /* wwEditor:start */
         const payload = computePayload(method, data, headers, params, dataType);
         if (wwUtils) {
@@ -40,7 +40,19 @@ export default {
         }
 
         /* wwEditor:end */
-        return this._apiRequest(url, method, data, headers, params, dataType);
+        if (isThroughServer) {
+            const websiteId = wwLib.wwWebsiteData.getInfo().id;
+            const pluginURL = wwLib.wwApiRequests._getPluginsUrl();
+            return await axios.post(`${pluginURL}/designs/${websiteId}/rest-api/request`, {
+                url,
+                method,
+                data,
+                params,
+                headers,
+            });
+        } else {
+            return await this._apiRequest(url, method, data, headers, params, dataType);
+        }
     },
     async _apiRequest(url, method, data, headers, params, dataType) {
         const payload = computePayload(method, data, headers, params, dataType);
@@ -55,6 +67,16 @@ export default {
 
         return response.data;
     },
+    /* wwEditor:start */
+    getCollectionErrorDetails(collection) {
+        return (
+            collection.error &&
+            collection.error.message &&
+            collection.error.message === 'Network Error' &&
+            '⚠️ There is a CORS issue. You may need to contact the administrator of the API to allow “weweb.io” domain to make requests. If this is not possible. Consider making this request through a server 👇'
+        );
+    },
+    /* wwEditor:end */
 };
 
 function computePayload(method, data, headers, params, dataType) {
