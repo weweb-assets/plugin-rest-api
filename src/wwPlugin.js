@@ -40,7 +40,7 @@ export default {
         }
 
         /* wwEditor:end */
-        if (isThroughServer) {
+        if (isThroughServer === true) {
             const websiteId = wwLib.wwWebsiteData.getInfo().id;
             const pluginURL = wwLib.wwApiRequests._getPluginsUrl();
             return await axios.post(`${pluginURL}/designs/${websiteId}/rest-api/request`, {
