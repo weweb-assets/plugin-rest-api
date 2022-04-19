@@ -15,7 +15,7 @@ export default {
             isAsync: true,
             /* wwEditor:start */
             edit: () => import('./src/components/ApiRequest.vue'),
-            getIsValid([url, method]) {
+            getIsValid({ url, method }) {
                 return !!url && !!method;
             },
             /* wwEditor:end */
