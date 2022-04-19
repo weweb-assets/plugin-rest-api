@@ -125,7 +125,18 @@
 export default {
     props: {
         plugin: { type: Object, required: true },
-        args: { type: Array, default: () => [null, null, [], [], [], null, false] },
+        args: {
+            type: Object,
+            default: () => ({
+                url: null,
+                method: null,
+                data: [],
+                headers: [],
+                queries: [],
+                dataType: null,
+                isThroughServer: false,
+            }),
+        },
     },
     emits: ['update:args'],
     data() {
@@ -147,25 +158,25 @@ export default {
     },
     computed: {
         url() {
-            return this.args[0];
+            return this.args.url;
         },
         method() {
-            return this.args[1];
+            return this.args.method;
         },
         data() {
-            return this.args[2] || [];
+            return this.args.data || [];
         },
         headers() {
-            return this.args[3] || [];
+            return this.args.headers || [];
         },
         queries() {
-            return this.args[4] || [];
+            return this.args.queries || [];
         },
         dataType() {
-            return this.args[5];
+            return this.args.dataType;
         },
         isThroughServer() {
-            return this.args[6] || false;
+            return this.args.isThroughServer || false;
         },
         isData() {
             return ['POST', 'PUT', 'PATCH'].includes(this.method);
@@ -176,81 +187,25 @@ export default {
     },
     methods: {
         setUrl(url) {
-            this.$emit('update:args', [
-                url,
-                this.method,
-                this.data,
-                this.headers,
-                this.queries,
-                this.dataType,
-                this.isThroughServer,
-            ]);
+            this.$emit('update:args', { ...this.args, url });
         },
         setMethod(method) {
-            this.$emit('update:args', [
-                this.url,
-                method,
-                this.data,
-                this.headers,
-                this.queries,
-                this.dataType,
-                this.isThroughServer,
-            ]);
+            this.$emit('update:args', { ...this.args, method });
         },
         setData(data) {
-            this.$emit('update:args', [
-                this.url,
-                this.method,
-                data,
-                this.headers,
-                this.queries,
-                this.dataType,
-                this.isThroughServer,
-            ]);
+            this.$emit('update:args', { ...this.args, data });
         },
         setQueries(queries) {
-            this.$emit('update:args', [
-                this.url,
-                this.method,
-                this.data,
-                this.headers,
-                queries,
-                this.dataType,
-                this.isThroughServer,
-            ]);
+            this.$emit('update:args', { ...this.args, queries });
         },
         setHeaders(headers) {
-            this.$emit('update:args', [
-                this.url,
-                this.method,
-                this.data,
-                headers,
-                this.queries,
-                this.dataType,
-                this.isThroughServer,
-            ]);
+            this.$emit('update:args', { ...this.args, headers });
         },
         setDataType(dataType) {
-            this.$emit('update:args', [
-                this.url,
-                this.method,
-                this.data,
-                this.headers,
-                this.queries,
-                dataType,
-                this.isThroughServer,
-            ]);
+            this.$emit('update:args', { ...this.args, dataType });
         },
         setIsThroughServer(isThroughServer) {
-            this.$emit('update:args', [
-                this.url,
-                this.method,
-                this.data,
-                this.headers,
-                this.queries,
-                this.dataType,
-                isThroughServer,
-            ]);
+            this.$emit('update:args', { ...this.args, isThroughServer });
         },
     },
 };

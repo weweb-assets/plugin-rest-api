@@ -8,19 +8,10 @@ export default {
             },
         },
     },
-    functions: [
+    actions: [
         {
             name: 'Api Request',
             code: 'apiRequest',
-            parameters: [
-                { name: 'url', type: 'string' },
-                { name: 'method', type: 'string' },
-                { name: 'fields', type: 'array', optional: true },
-                { name: 'headers', type: 'array', optional: true },
-                { name: 'query', type: 'array', optional: true },
-                { name: 'fields type', type: 'string' },
-                { name: 'isThroughServer', type: 'boolean' },
-            ],
             isAsync: true,
             /* wwEditor:start */
             edit: () => import('./src/components/ApiRequest.vue'),
