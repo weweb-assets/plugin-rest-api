@@ -113,10 +113,12 @@
         />
     </wwEditorFormRow>
     <wwEditorFormRow>
-        <div class="flex items-center">
-            <wwEditorInputSwitch :model-value="isThroughServer" @update:modelValue="setIsThroughServer" />
-            <div class="ww-typo-caption ml-2">Make this request through a server</div>
-            <wwEditorQuestionMark tooltip-position="top-right" tooltip-name="rest-api-through-server" class="ml-2" />
+        <div class="flex justify-between items-center">
+            <div class="flex items-center">
+                <wwEditorInputSwitch :model-value="isThroughServer" @update:modelValue="setIsThroughServer" />
+                <div class="ww-typo-caption ml-2">Make toto this request through a server</div>
+            </div>
+            <wwEditorQuestionMark tooltip-position="top-center" tooltip-name="rest-api-through-server" class="ml-2" />
         </div>
     </wwEditorFormRow>
 </template>
@@ -255,3 +257,5 @@ export default {
     },
 };
 </script>
+
+<style scoped lang="scss"></style>
