@@ -24,7 +24,7 @@ export default {
             return { data: null, error: null };
         }
     },
-    async apiRequest(url, method, data, headers, params, dataType, isThroughServer, wwUtils) {
+    async apiRequest({ url, method, data, headers, params, dataType, isThroughServer }, wwUtils) {
         /* wwEditor:start */
         const payload = computePayload(method, data, headers, params, dataType);
         if (wwUtils) {
@@ -40,7 +40,7 @@ export default {
         }
 
         /* wwEditor:end */
-        if (isThroughServer === true) {
+        if (isThroughServer) {
             const websiteId = wwLib.wwWebsiteData.getInfo().id;
             const pluginURL = wwLib.wwApiRequests._getPluginsUrl();
             return await axios.post(`${pluginURL}/designs/${websiteId}/rest-api/request`, {
