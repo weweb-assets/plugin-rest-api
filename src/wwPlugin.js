@@ -24,7 +24,7 @@ export default {
             return { data: null, error: null };
         }
     },
-    async apiRequest({ url, method, data, headers, params, dataType, isThroughServer }, wwUtils) {
+    async apiRequest({ url, method, data, headers, queries: params, dataType, isThroughServer }, wwUtils) {
         /* wwEditor:start */
         const payload = computePayload(method, data, headers, params, dataType);
         if (wwUtils) {
