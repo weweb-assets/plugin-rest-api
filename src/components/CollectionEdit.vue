@@ -125,7 +125,7 @@
                 <wwEditorQuestionMark
                     tooltip-position="top-right"
                     tooltip-name="rest-api-through-server"
-                    class="ml-2"
+                    class="ml-auto"
                 />
             </div>
         </wwEditorFormRow>
