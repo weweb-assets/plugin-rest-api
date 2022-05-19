@@ -10,7 +10,7 @@ export default {
     },
     actions: [
         {
-            name: 'Api Request',
+            name: 'REST API Request',
             code: 'apiRequest',
             isAsync: true,
             /* wwEditor:start */
