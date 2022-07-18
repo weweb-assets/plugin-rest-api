@@ -47,7 +47,7 @@ export default {
                 url,
                 method,
                 data,
-                params,
+                queries: params,
                 headers,
             });
         } else {
