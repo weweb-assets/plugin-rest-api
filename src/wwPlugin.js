@@ -24,9 +24,9 @@ export default {
             return { data: null, error: null };
         }
     },
-    async apiRequest({ url, method, data, headers, queries: params, dataType, isThroughServer }, wwUtils) {
+    async apiRequest({ url, method, data, headers, queries: params, dataType, isThroughServer, useRawBody }, wwUtils) {
         /* wwEditor:start */
-        const payload = computePayload(method, data, headers, params, dataType);
+        const payload = computePayload(method, data, headers, params, dataType, useRawBody);
         if (wwUtils) {
             wwUtils.log({ label: 'Request', preview: `${method} ${url}` });
             wwUtils.log({
@@ -51,11 +51,11 @@ export default {
                 headers,
             });
         } else {
-            return await this._apiRequest(url, method, data, headers, params, dataType);
+            return await this._apiRequest(url, method, data, headers, params, dataType, useRawBody);
         }
     },
-    async _apiRequest(url, method, data, headers, params, dataType) {
-        const payload = computePayload(method, data, headers, params, dataType);
+    async _apiRequest(url, method, data, headers, params, dataType, useRawBody) {
+        const payload = computePayload(method, data, headers, params, dataType, useRawBody);
 
         const response = await axios({
             url,
@@ -79,22 +79,24 @@ export default {
     /* wwEditor:end */
 };
 
-function computePayload(method, data, headers, params, dataType) {
-    data = computeList(data);
+function computePayload(method, data, headers, params, dataType, useRawBody) {
+    if (!useRawBody) {
+        data = computeList(data);
 
-    switch (dataType) {
-        case 'application/x-www-form-urlencoded': {
-            data = qs.stringify(data);
-            break;
+        switch (dataType) {
+            case 'application/x-www-form-urlencoded': {
+                data = qs.stringify(data);
+                break;
+            }
+            case 'multipart/form-data': {
+                const formData = new FormData();
+                for (const key in data) formData.append(key, data[key]);
+                data = formData;
+                break;
+            }
+            default:
+                break;
         }
-        case 'multipart/form-data': {
-            const formData = new FormData();
-            for (const key in data) formData.append(key, data[key]);
-            data = formData;
-            break;
-        }
-        default:
-            break;
     }
 
     switch (method) {

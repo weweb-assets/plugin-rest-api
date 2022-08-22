@@ -16,36 +16,52 @@
         bindable
         @update:modelValue="setUrl"
     />
-    <wwEditorInputRow
-        v-if="isData"
-        type="array"
-        :model-value="data"
-        label="Fields"
-        bindable
-        @update:modelValue="setData"
-        @add-item="setData([...(data || []), {}])"
-    >
-        <template #default="{ item, setItem }">
-            <wwEditorInputRow
-                type="query"
-                :model-value="item.key"
-                label="Key"
-                placeholder="Enter a value"
-                bindable
-                small
-                @update:modelValue="setItem({ ...item, key: $event })"
-            />
-            <wwEditorInputRow
-                type="query"
-                :model-value="item.value"
-                label="Value"
-                placeholder="Enter a value"
-                bindable
-                small
-                @update:modelValue="setItem({ ...item, value: $event })"
-            />
-        </template>
-    </wwEditorInputRow>
+    <template v-if="isData">
+        <wwEditorFormRow>
+            <div class="flex items-center">
+                <wwEditorInputSwitch :model-value="useRawBody" @update:modelValue="setUseRawBody" />
+                <div class="ww-typo-caption ml-2">Use raw body</div>
+            </div>
+        </wwEditorFormRow>
+        <wwEditorInputRow
+            v-if="useRawBody"
+            type="string"
+            :model-value="data"
+            label="Body"
+            bindable
+            @update:modelValue="setData"
+        />
+        <wwEditorInputRow
+            v-else
+            type="array"
+            :model-value="data"
+            label="Fields"
+            bindable
+            @update:modelValue="setData"
+            @add-item="setData([...(data || []), {}])"
+        >
+            <template #default="{ item, setItem }">
+                <wwEditorInputRow
+                    type="query"
+                    :model-value="item.key"
+                    label="Key"
+                    placeholder="Enter a value"
+                    bindable
+                    small
+                    @update:modelValue="setItem({ ...item, key: $event })"
+                />
+                <wwEditorInputRow
+                    type="query"
+                    :model-value="item.value"
+                    label="Value"
+                    placeholder="Enter a value"
+                    bindable
+                    small
+                    @update:modelValue="setItem({ ...item, value: $event })"
+                />
+            </template>
+        </wwEditorInputRow>
+    </template>
     <wwEditorInputRow
         label="Headers"
         type="array"
@@ -104,7 +120,7 @@
             />
         </template>
     </wwEditorInputRow>
-    <wwEditorFormRow v-if="isData" label="Fields type">
+    <wwEditorFormRow v-if="isData" label="Content type">
         <wwEditorInputTextSelect
             :options="dataTypeOptions"
             :model-value="dataType"
@@ -152,7 +168,11 @@ export default {
             dataTypeOptions: [
                 { label: 'Default (application/json)', value: 'application/json', default: true },
                 { label: 'application/x-www-form-urlencoded', value: 'application/x-www-form-urlencoded' },
+                { label: 'application/javascript', value: 'application/javascript' },
+                { label: 'application/xml', value: 'application/xml' },
                 { label: 'multipart/form-data', value: 'multipart/form-data' },
+                { label: 'text/plain', value: 'text/plain' },
+                { label: 'text/html', value: 'text/html' },
             ],
         };
     },
@@ -177,6 +197,9 @@ export default {
         },
         isThroughServer() {
             return this.args.isThroughServer || false;
+        },
+        useRawBody() {
+            return this.args.useRawBody || false;
         },
         isData() {
             return ['POST', 'PUT', 'PATCH'].includes(this.method);
@@ -206,6 +229,9 @@ export default {
         },
         setIsThroughServer(isThroughServer) {
             this.$emit('update:args', { ...this.args, isThroughServer });
+        },
+        setUseRawBody(useRawBody) {
+            this.$emit('update:args', { ...this.args, useRawBody, data: useRawBody ? null : [] });
         },
     },
 };
