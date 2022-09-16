@@ -24,7 +24,10 @@ export default {
             return { data: null, error: null };
         }
     },
-    async apiRequest({ url, method, data, headers, queries: params, dataType, isThroughServer, useRawBody }, wwUtils) {
+    async apiRequest(
+        { url, method, data, headers, queries: params, dataType, isThroughServer, useRawBody = false },
+        wwUtils
+    ) {
         /* wwEditor:start */
         const payload = computePayload(method, data, headers, params, dataType, useRawBody);
         if (wwUtils) {
@@ -49,6 +52,7 @@ export default {
                 data,
                 queries: params,
                 headers,
+                useRawBody,
             });
         } else {
             return await this._apiRequest(url, method, data, headers, params, dataType, useRawBody);
