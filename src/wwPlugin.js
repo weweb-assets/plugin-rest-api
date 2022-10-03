@@ -46,17 +46,14 @@ export default {
         if (isThroughServer) {
             const websiteId = wwLib.wwWebsiteData.getInfo().id;
             const pluginURL = wwLib.wwApiRequests._getPluginsUrl();
-
-            const payload = computePayload(method, data, headers, params, dataType, useRawBody);
-
-            if(dataType) headers.push({key: 'Content-Type', value: dataType})
             
             return await axios.post(`${pluginURL}/designs/${websiteId}/rest-api/request`, {
                 url,
                 method,
-                data: payload.data,
+                data,
                 queries: params,
                 headers,
+                dataType,
                 useRawBody,
             });
         } else {
