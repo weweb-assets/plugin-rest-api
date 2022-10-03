@@ -49,7 +49,7 @@ export default {
 
             const payload = computePayload(method, data, headers, params, dataType, useRawBody);
 
-            if(dataType) headers.push({'Content-Type': dataType})
+            if(dataType) headers.push({key: 'Content-Type', value: dataType})
             
             return await axios.post(`${pluginURL}/designs/${websiteId}/rest-api/request`, {
                 url,
