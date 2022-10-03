@@ -55,7 +55,7 @@ export default {
                 url,
                 method,
                 data: payload.data,
-                queries,
+                queries: params,
                 headers,
                 useRawBody,
             });
