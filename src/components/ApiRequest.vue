@@ -17,15 +17,18 @@
         @update:modelValue="setUrl"
     />
     <template v-if="isData">
-        <wwEditorFormRow>
+        <!-- <wwEditorFormRow>
             <div class="flex items-center">
                 <wwEditorInputSwitch :model-value="useRawBody" @update:modelValue="setUseRawBody" />
-                <div class="ww-typo-caption ml-2">Use raw body</div>
+                <div class="body-2 ml-2">Use raw body</div>
             </div>
+        </wwEditorFormRow> -->
+        <wwEditorFormRow>
+            <wwEditorInputRadio :choices="dataChoices" :model-value="useRawBody" @update:modelValue="setUseRawBody" />
         </wwEditorFormRow>
         <wwEditorInputRow
             v-if="useRawBody"
-            type="string"
+            type="query"
             :model-value="data"
             label="Body"
             bindable
@@ -130,9 +133,16 @@
     </wwEditorFormRow>
     <wwEditorFormRow>
         <div class="flex items-center">
+            <wwEditorInputSwitch :model-value="isWithCredentials" @update:modelValue="setIsWithCredentials" />
+            <div class="body-2 ml-2">Send credentials</div>
+            <wwEditorQuestionMark tooltip-position="top-left" tooltip-name="rest-api-credentials" class="ml-auto" />
+        </div>
+    </wwEditorFormRow>
+    <wwEditorFormRow>
+        <div class="flex items-center">
             <wwEditorInputSwitch :model-value="isThroughServer" @update:modelValue="setIsThroughServer" />
-            <div class="ww-typo-caption ml-2">Make this request through a server</div>
-            <wwEditorQuestionMark tooltip-position="top-right" tooltip-name="rest-api-through-server" class="ml-auto" />
+            <div class="body-2 ml-2">Make this request through a server</div>
+            <wwEditorQuestionMark tooltip-position="top-left" tooltip-name="rest-api-through-server" class="ml-auto" />
         </div>
     </wwEditorFormRow>
 </template>
@@ -151,12 +161,17 @@ export default {
                 queries: [],
                 dataType: null,
                 isThroughServer: false,
+                isWithCredentials: false,
             }),
         },
     },
     emits: ['update:args'],
     data() {
         return {
+            dataChoices: [
+                { label: 'Parsed fields', value: false, default: true },
+                { label: 'Raw body', value: true },
+            ],
             methodOptions: [
                 { label: 'GET', value: 'GET' },
                 { label: 'POST', value: 'POST', default: true },
@@ -198,6 +213,9 @@ export default {
         isThroughServer() {
             return this.args.isThroughServer || false;
         },
+        isWithCredentials() {
+            return this.args.isWithCredentials || false;
+        },
         useRawBody() {
             return this.args.useRawBody || false;
         },
@@ -229,6 +247,9 @@ export default {
         },
         setIsThroughServer(isThroughServer) {
             this.$emit('update:args', { ...this.args, isThroughServer });
+        },
+        setIsWithCredentials(isWithCredentials) {
+            this.$emit('update:args', { ...this.args, isWithCredentials });
         },
         setUseRawBody(useRawBody) {
             this.$emit('update:args', { ...this.args, useRawBody, data: useRawBody ? null : [] });

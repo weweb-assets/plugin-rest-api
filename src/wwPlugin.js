@@ -12,8 +12,18 @@ export default {
     async fetchCollection(collection) {
         if (collection.mode === 'dynamic' && !collection.config.isThroughServer) {
             try {
-                const { url, method, data, headers, queries, resultKey } = collection.config;
-                const responseData = await this._apiRequest(url, method, data, headers, queries);
+                const { url, method, data, headers, queries, resultKey, dataType, useRawBody, isWithCredentials } =
+                    collection.config;
+                const responseData = await this._apiRequest(
+                    url,
+                    method,
+                    data,
+                    headers,
+                    queries,
+                    dataType,
+                    useRawBody,
+                    isWithCredentials
+                );
                 return { data: _.get(responseData, resultKey, responseData), error: null };
             } catch (err) {
                 return {
@@ -25,7 +35,17 @@ export default {
         }
     },
     async apiRequest(
-        { url, method, data, headers, queries: params, dataType, isThroughServer, useRawBody = false },
+        {
+            url,
+            method,
+            data,
+            headers,
+            queries: params,
+            dataType,
+            isThroughServer,
+            useRawBody = false,
+            isWithCredentials = false,
+        },
         wwUtils
     ) {
         /* wwEditor:start */
@@ -46,7 +66,7 @@ export default {
         if (isThroughServer) {
             const websiteId = wwLib.wwWebsiteData.getInfo().id;
             const pluginURL = wwLib.wwApiRequests._getPluginsUrl();
-            
+
             return await axios.post(`${pluginURL}/designs/${websiteId}/rest-api/request`, {
                 url,
                 method,
@@ -55,12 +75,13 @@ export default {
                 headers,
                 dataType,
                 useRawBody,
+                isWithCredentials,
             });
         } else {
-            return await this._apiRequest(url, method, data, headers, params, dataType, useRawBody);
+            return await this._apiRequest(url, method, data, headers, params, dataType, useRawBody, isWithCredentials);
         }
     },
-    async _apiRequest(url, method, data, headers, params, dataType, useRawBody) {
+    async _apiRequest(url, method, data, headers, params, dataType, useRawBody, isWithCredentials) {
         const payload = computePayload(method, data, headers, params, dataType, useRawBody);
 
         const response = await axios({
@@ -69,6 +90,7 @@ export default {
             data: payload.data,
             params: payload.params,
             headers: payload.headers,
+            withCredentials: isWithCredentials,
         });
 
         return response.data;
