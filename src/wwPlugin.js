@@ -67,20 +67,15 @@ export default {
             const websiteId = wwLib.wwWebsiteData.getInfo().id;
             const pluginURL = wwLib.wwApiRequests._getPluginsUrl();
 
-            return await axios.post(
-                `${pluginURL}/designs/${websiteId}/rest-api/request`,
-                {
-                    url,
-                    method,
-                    data,
-                    queries: params,
-                    headers,
-                    dataType,
-                    useRawBody,
-                    isWithCredentials,
-                },
-                { withCredentials: isWithCredentials }
-            );
+            return await axios.post(`${pluginURL}/designs/${websiteId}/rest-api/request`, {
+                url,
+                method,
+                data,
+                queries: params,
+                headers,
+                dataType,
+                useRawBody,
+            });
         } else {
             return await this._apiRequest(url, method, data, headers, params, dataType, useRawBody, isWithCredentials);
         }

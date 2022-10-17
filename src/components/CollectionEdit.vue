@@ -143,16 +143,6 @@
         <wwEditorFormRow v-if="collection.mode === 'dynamic'">
             <div class="flex items-center">
                 <wwEditorInputSwitch
-                    :model-value="api.isWithCredentials"
-                    @update:modelValue="setProp('isWithCredentials', $event)"
-                />
-                <div class="body-2 ml-2">Send credentials</div>
-                <wwEditorQuestionMark tooltip-position="top-left" tooltip-name="rest-api-credentials" class="ml-auto" />
-            </div>
-        </wwEditorFormRow>
-        <wwEditorFormRow v-if="collection.mode === 'dynamic'">
-            <div class="flex items-center">
-                <wwEditorInputSwitch
                     :model-value="api.isThroughServer"
                     @update:modelValue="setProp('isThroughServer', $event)"
                 />
@@ -162,6 +152,16 @@
                     tooltip-name="rest-api-through-server"
                     class="ml-auto"
                 />
+            </div>
+        </wwEditorFormRow>
+        <wwEditorFormRow v-if="collection.mode === 'dynamic' && !api.isThroughServer">
+            <div class="flex items-center">
+                <wwEditorInputSwitch
+                    :model-value="api.isWithCredentials"
+                    @update:modelValue="setProp('isWithCredentials', $event)"
+                />
+                <div class="body-2 ml-2">Send credentials</div>
+                <wwEditorQuestionMark tooltip-position="top-left" tooltip-name="rest-api-credentials" class="ml-auto" />
             </div>
         </wwEditorFormRow>
     </div>

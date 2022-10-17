@@ -17,12 +17,6 @@
         @update:modelValue="setUrl"
     />
     <template v-if="isData">
-        <!-- <wwEditorFormRow>
-            <div class="flex items-center">
-                <wwEditorInputSwitch :model-value="useRawBody" @update:modelValue="setUseRawBody" />
-                <div class="body-2 ml-2">Use raw body</div>
-            </div>
-        </wwEditorFormRow> -->
         <wwEditorFormRow>
             <wwEditorInputRadio :choices="dataChoices" :model-value="useRawBody" @update:modelValue="setUseRawBody" />
         </wwEditorFormRow>
@@ -133,16 +127,16 @@
     </wwEditorFormRow>
     <wwEditorFormRow>
         <div class="flex items-center">
-            <wwEditorInputSwitch :model-value="isWithCredentials" @update:modelValue="setIsWithCredentials" />
-            <div class="body-2 ml-2">Send credentials</div>
-            <wwEditorQuestionMark tooltip-position="top-left" tooltip-name="rest-api-credentials" class="ml-auto" />
-        </div>
-    </wwEditorFormRow>
-    <wwEditorFormRow>
-        <div class="flex items-center">
             <wwEditorInputSwitch :model-value="isThroughServer" @update:modelValue="setIsThroughServer" />
             <div class="body-2 ml-2">Make this request through a server</div>
             <wwEditorQuestionMark tooltip-position="top-left" tooltip-name="rest-api-through-server" class="ml-auto" />
+        </div>
+    </wwEditorFormRow>
+    <wwEditorFormRow v-if="!isThroughServer">
+        <div class="flex items-center">
+            <wwEditorInputSwitch :model-value="isWithCredentials" @update:modelValue="setIsWithCredentials" />
+            <div class="body-2 ml-2">Send credentials</div>
+            <wwEditorQuestionMark tooltip-position="top-left" tooltip-name="rest-api-credentials" class="ml-auto" />
         </div>
     </wwEditorFormRow>
 </template>
