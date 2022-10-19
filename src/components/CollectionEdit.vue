@@ -18,36 +18,53 @@
             :bindable="collection.mode === 'dynamic'"
             @update:modelValue="setProp('url', $event)"
         />
-        <wwEditorInputRow
-            v-if="isFields"
-            label="Fields"
-            type="array"
-            :model-value="api.data"
-            :bindable="collection.mode === 'dynamic'"
-            @update:modelValue="setProp('data', $event)"
-            @add-item="setProp('data', [...(api.data || []), {}])"
-        >
-            <template #default="{ item, setItem }">
-                <wwEditorInputRow
-                    type="query"
-                    :model-value="item.key"
-                    label="Key"
-                    placeholder="Enter a value"
-                    small
-                    :bindable="collection.mode === 'dynamic'"
-                    @update:modelValue="setItem({ ...item, key: $event })"
+        <template v-if="isFields">
+            <wwEditorFormRow>
+                <wwEditorInputRadio
+                    :choices="dataChoices"
+                    :model-value="api.useRawBody"
+                    @update:modelValue="setProp('useRawBody', $event)"
                 />
-                <wwEditorInputRow
-                    type="query"
-                    :model-value="item.value"
-                    label="Value"
-                    placeholder="Enter a value"
-                    small
-                    :bindable="collection.mode === 'dynamic'"
-                    @update:modelValue="setItem({ ...item, value: $event })"
-                />
-            </template>
-        </wwEditorInputRow>
+            </wwEditorFormRow>
+            <wwEditorInputRow
+                v-if="api.useRawBody"
+                type="query"
+                :model-value="api.data"
+                label="Body"
+                bindable
+                @update:modelValue="setProp('data', $event)"
+            />
+            <wwEditorInputRow
+                v-else
+                label="Fields"
+                type="array"
+                :model-value="api.data"
+                :bindable="collection.mode === 'dynamic'"
+                @update:modelValue="setProp('data', $event)"
+                @add-item="setProp('data', [...(api.data || []), {}])"
+            >
+                <template #default="{ item, setItem }">
+                    <wwEditorInputRow
+                        type="query"
+                        :model-value="item.key"
+                        label="Key"
+                        placeholder="Enter a value"
+                        small
+                        :bindable="collection.mode === 'dynamic'"
+                        @update:modelValue="setItem({ ...item, key: $event })"
+                    />
+                    <wwEditorInputRow
+                        type="query"
+                        :model-value="item.value"
+                        label="Value"
+                        placeholder="Enter a value"
+                        small
+                        :bindable="collection.mode === 'dynamic'"
+                        @update:modelValue="setItem({ ...item, value: $event })"
+                    />
+                </template>
+            </wwEditorInputRow>
+        </template>
         <wwEditorInputRow
             label="Headers"
             type="array"
@@ -106,6 +123,14 @@
                 />
             </template>
         </wwEditorInputRow>
+        <wwEditorFormRow v-if="isFields" label="Content type">
+            <wwEditorInputTextSelect
+                :options="dataTypeOptions"
+                :model-value="api.dataType"
+                small
+                @update:modelValue="setProp('dataType', $event)"
+            />
+        </wwEditorFormRow>
         <wwEditorFormRow label="Result key">
             <wwEditorInputText
                 type="text"
@@ -121,12 +146,22 @@
                     :model-value="api.isThroughServer"
                     @update:modelValue="setProp('isThroughServer', $event)"
                 />
-                <div class="ww-typo-caption ml-2">Make this request through a server</div>
+                <div class="body-2 ml-2">Make this request through a server</div>
                 <wwEditorQuestionMark
-                    tooltip-position="top-right"
+                    tooltip-position="top-left"
                     tooltip-name="rest-api-through-server"
                     class="ml-auto"
                 />
+            </div>
+        </wwEditorFormRow>
+        <wwEditorFormRow v-if="collection.mode === 'dynamic' && !api.isThroughServer">
+            <div class="flex items-center">
+                <wwEditorInputSwitch
+                    :model-value="api.isWithCredentials"
+                    @update:modelValue="setProp('isWithCredentials', $event)"
+                />
+                <div class="body-2 ml-2">Send credentials</div>
+                <wwEditorQuestionMark tooltip-position="top-left" tooltip-name="rest-api-credentials" class="ml-auto" />
             </div>
         </wwEditorFormRow>
     </div>
@@ -141,6 +176,19 @@ export default {
     emits: ['update:config'],
     data() {
         return {
+            dataChoices: [
+                { label: 'Parsed fields', value: false, default: true },
+                { label: 'Raw body', value: true },
+            ],
+            dataTypeOptions: [
+                { label: 'Default (application/json)', value: 'application/json', default: true },
+                { label: 'application/x-www-form-urlencoded', value: 'application/x-www-form-urlencoded' },
+                { label: 'application/javascript', value: 'application/javascript' },
+                { label: 'application/xml', value: 'application/xml' },
+                { label: 'multipart/form-data', value: 'multipart/form-data' },
+                { label: 'text/plain', value: 'text/plain' },
+                { label: 'text/html', value: 'text/html' },
+            ],
             methodOptions: [
                 { value: 'GET', label: 'GET', default: true },
                 { value: 'POST', label: 'POST' },
@@ -158,7 +206,10 @@ export default {
                 queries: [],
                 data: [],
                 resultKey: '',
+                dataType: undefined,
                 isThroughServer: false,
+                isWithCredentials: false,
+                useRawBody: false,
                 ...this.config,
             };
         },
