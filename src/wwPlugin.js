@@ -100,7 +100,7 @@ export default {
             collection.error &&
             collection.error.message &&
             collection.error.message === 'Network Error' &&
-            '⚠️ There is a network error. That can happen when the server you are trying to call is down, or it is not found, or there is a CORS issue because the server expects a call from another server and not a frontend like WeWeb. If the network error is caused by a CORS issue, you may contact the administrator of the API to allow the “weweb.io” domain to make requests or, if this is not possible, consider enabling the "Make this request through a server" option before clicking on "Continue".'
+            '⚠️ There is a network error. That can happen when the server you are trying to call is down, or it is not found, or there is a CORS issue because the server expects a call from another server and not a frontend like WeWeb. If the network error is caused by a CORS issue, you may contact the administrator of the API to allow the “weweb.io” domain to make requests or, if this is not possible, consider enabling the "Proxy the request to bypass CORS issues" option before clicking on "Continue".'
         );
     },
     /* wwEditor:end */
