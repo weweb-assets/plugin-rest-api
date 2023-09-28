@@ -128,7 +128,7 @@
     <wwEditorFormRow>
         <div class="flex items-center">
             <wwEditorInputSwitch :model-value="isThroughServer" @update:modelValue="setIsThroughServer" />
-            <div class="body-2 ml-2">Make this request through a server</div>
+            <div class="body-2 ml-2">Proxy the request to bypass CORS issues</div>
             <wwEditorQuestionMark tooltip-position="top-left" tooltip-name="rest-api-through-server" class="ml-auto" />
         </div>
     </wwEditorFormRow>
