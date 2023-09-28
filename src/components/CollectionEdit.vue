@@ -145,8 +145,11 @@
                 <wwEditorInputSwitch
                     :model-value="api.isThroughServer"
                     @update:modelValue="setProp('isThroughServer', $event)"
+                    :disabled="api.dataType === 'multipart/form-data'"
                 />
-                <div class="body-2 ml-2">Proxy the request to bypass CORS issues</div>
+                <div class="body-2 ml-2">
+                    Proxy the request to bypass CORS issues (not allowed with multipart/form-data)
+                </div>
                 <wwEditorQuestionMark
                     tooltip-position="top-left"
                     tooltip-name="rest-api-through-server"
@@ -196,6 +199,13 @@ export default {
                 { value: 'PATCH', label: 'PATCH' },
             ],
         };
+    },
+    watch: {
+        'api.dataType'(value) {
+            if (value === 'multipart/form-data' && this.api.isThroughServer) {
+                this.setProp('isThroughServer', false);
+            }
+        },
     },
     computed: {
         api() {
