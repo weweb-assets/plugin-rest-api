@@ -127,9 +127,24 @@
     </wwEditorFormRow>
     <wwEditorFormRow>
         <div class="flex items-center">
-            <wwEditorInputSwitch :model-value="isThroughServer" @update:modelValue="setIsThroughServer" />
+            <wwEditorInputSwitch
+                :model-value="isThroughServer"
+                @update:modelValue="setIsThroughServer"
+                :disabled="dataType === 'multipart/form-data'"
+            />
             <div class="body-2 ml-2">Proxy the request to bypass CORS issues</div>
-            <wwEditorQuestionMark tooltip-position="top-left" tooltip-name="rest-api-through-server" class="ml-auto" />
+            <wwEditorQuestionMark
+                v-if="dataType === 'multipart/form-data'"
+                tooltip-position="top-left"
+                forced-content="Not allowed with content-type multipart/form-data"
+                class="ml-auto text-yellow-500"
+            />
+            <wwEditorQuestionMark
+                v-else
+                tooltip-position="top-left"
+                tooltip-name="rest-api-through-server"
+                class="ml-auto"
+            />
         </div>
     </wwEditorFormRow>
     <wwEditorFormRow v-if="!isThroughServer">
@@ -237,7 +252,11 @@ export default {
             this.$emit('update:args', { ...this.args, headers });
         },
         setDataType(dataType) {
-            this.$emit('update:args', { ...this.args, dataType });
+            this.$emit('update:args', {
+                ...this.args,
+                dataType,
+                isThroughServer: dataType === 'multipart/form-data' ? false : this.isThroughServer,
+            });
         },
         setIsThroughServer(isThroughServer) {
             this.$emit('update:args', { ...this.args, isThroughServer });
