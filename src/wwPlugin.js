@@ -51,15 +51,18 @@ export default {
         /* wwEditor:start */
         const payload = computePayload(method, data, headers, params, dataType, useRawBody);
         if (wwUtils) {
-            wwUtils.log({ label: 'Request', preview: `${method} ${url}` });
-            wwUtils.log({
-                label: 'Payload',
-                preview: {
-                    Data: payload.data,
-                    Headers: payload.headers,
-                    'Query string': payload.params,
-                },
-            });
+            wwUtils.log(
+                'info',
+                `Executing request ${method} on ${url} ${isThroughServer ? '(through weweb server)' : ''}`,
+                {
+                    type: 'request',
+                    preview: {
+                        Data: payload.data,
+                        Headers: payload.headers,
+                        'Query string': payload.params,
+                    },
+                }
+            );
         }
 
         /* wwEditor:end */
