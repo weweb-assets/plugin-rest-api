@@ -31,7 +31,7 @@
                 type="query"
                 :model-value="api.data"
                 label="Body"
-                bindable
+                :bindable="collection.mode === 'dynamic'"
                 @update:modelValue="setProp('data', $event)"
             />
             <wwEditorInputRow
