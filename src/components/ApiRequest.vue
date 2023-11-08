@@ -194,6 +194,7 @@ export default {
                 { label: 'application/x-www-form-urlencoded', value: 'application/x-www-form-urlencoded' },
                 { label: 'application/javascript', value: 'application/javascript' },
                 { label: 'application/xml', value: 'application/xml' },
+                { label: 'application/merge-patch+json', value: 'application/merge-patch+json' },
                 { label: 'multipart/form-data', value: 'multipart/form-data' },
                 { label: 'text/plain', value: 'text/plain' },
                 { label: 'text/html', value: 'text/html' },
