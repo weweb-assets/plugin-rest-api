@@ -40,7 +40,7 @@
                 type="array"
                 :model-value="api.data"
                 :bindable="collection.mode === 'dynamic'"
-                @update:modelValue="setProp('data', $event)"
+                @update:modelValue="setProp('data', $event || [])"
                 @add-item="setProp('data', [...(api.data || []), {}])"
             >
                 <template #default="{ item, setItem }">
@@ -70,7 +70,7 @@
             type="array"
             :model-value="api.headers"
             :bindable="collection.mode === 'dynamic'"
-            @update:modelValue="setProp('headers', $event)"
+            @update:modelValue="setProp('headers', $event || [])"
             @add-item="setProp('headers', [...(api.headers || []), {}])"
         >
             <template #default="{ item, setItem }">
@@ -99,7 +99,7 @@
             type="array"
             :model-value="api.queries"
             :bindable="collection.mode === 'dynamic'"
-            @update:modelValue="setProp('queries', $event)"
+            @update:modelValue="setProp('queries', $event || [])"
             @add-item="setProp('queries', [...(api.queries || []), {}])"
         >
             <template #default="{ item, setItem }">

@@ -34,7 +34,7 @@
             :model-value="data"
             label="Fields"
             bindable
-            @update:modelValue="setData"
+            @update:modelValue="setData($event || [])"
             @add-item="setData([...(data || []), {}])"
         >
             <template #default="{ item, setItem }">
@@ -247,10 +247,10 @@ export default {
             this.$emit('update:args', { ...this.args, data });
         },
         setQueries(queries) {
-            this.$emit('update:args', { ...this.args, queries });
+            this.$emit('update:args', { ...this.args, queries: queries || [] });
         },
         setHeaders(headers) {
-            this.$emit('update:args', { ...this.args, headers });
+            this.$emit('update:args', { ...this.args, headers: headers || [] });
         },
         setDataType(dataType) {
             this.$emit('update:args', {

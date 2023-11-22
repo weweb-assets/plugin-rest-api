@@ -74,8 +74,8 @@ export default {
                 url,
                 method,
                 data,
-                queries: params,
-                headers,
+                queries: params || [],
+                headers: headers || [],
                 dataType,
                 useRawBody,
             });
