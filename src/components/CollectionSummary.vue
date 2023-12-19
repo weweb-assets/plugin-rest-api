@@ -18,6 +18,7 @@ export default {
 <style lang="scss" scoped>
 .rest-api-collection-summary {
     display: grid;
+    grid-template-columns: 0fr 1fr;
     column-gap: var(--ww-spacing-02);
     row-gap: var(--ww-spacing-02);
 }
