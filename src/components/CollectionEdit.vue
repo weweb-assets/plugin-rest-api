@@ -140,25 +140,28 @@
                 @update:modelValue="setProp('resultKey', $event)"
             />
         </wwEditorFormRow>
-        <wwEditorFormRow v-if="collection.mode === 'dynamic'">
+        <wwEditorFormRow v-if="collection.mode === 'dynamic'" label="Proxy request server side (bypass CORS)">
             <div class="flex items-center">
-                <wwEditorInputSwitch
+                <wwEditorInput
+                    type="onoff"
+                    bindable
+                    small
                     :model-value="api.isThroughServer"
-                    @update:modelValue="setProp('isThroughServer', $event)"
-                    :disabled="api.dataType === 'multipart/form-data'"
+                    @update:modelValue="
+                        setProp('isThroughServer', api.dataType === 'multipart/form-data' ? false : $event)
+                    "
                 />
-                <div class="body-2 ml-2">Proxy the request to bypass CORS issues</div>
                 <wwEditorQuestionMark
                     v-if="api.dataType === 'multipart/form-data'"
                     tooltip-position="top-left"
                     forced-content="Not allowed with content-type multipart/form-data"
-                    class="ml-auto text-yellow-500"
+                    class="ml-2 text-yellow-500"
                 />
                 <wwEditorQuestionMark
                     v-else
                     tooltip-position="top-left"
                     tooltip-name="rest-api-through-server"
-                    class="ml-auto"
+                    class="ml-2"
                 />
             </div>
         </wwEditorFormRow>

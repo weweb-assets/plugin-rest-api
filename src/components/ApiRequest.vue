@@ -125,25 +125,26 @@
             @update:modelValue="setDataType"
         />
     </wwEditorFormRow>
-    <wwEditorFormRow>
+    <wwEditorFormRow label="Proxy request server side (bypass CORS)">
         <div class="flex items-center">
-            <wwEditorInputSwitch
+            <wwEditorInput
+                type="onoff"
+                bindable
+                small
                 :model-value="isThroughServer"
                 @update:modelValue="setIsThroughServer"
-                :disabled="dataType === 'multipart/form-data'"
             />
-            <div class="body-2 ml-2">Proxy the request to bypass CORS issues</div>
             <wwEditorQuestionMark
                 v-if="dataType === 'multipart/form-data'"
                 tooltip-position="top-left"
                 forced-content="Not allowed with content-type multipart/form-data"
-                class="ml-auto text-yellow-500"
+                class="ml-2 text-yellow-500"
             />
             <wwEditorQuestionMark
                 v-else
                 tooltip-position="top-left"
                 tooltip-name="rest-api-through-server"
-                class="ml-auto"
+                class="ml-2"
             />
         </div>
     </wwEditorFormRow>
@@ -260,6 +261,7 @@ export default {
             });
         },
         setIsThroughServer(isThroughServer) {
+            if (this.dataType === 'multipart/form-data' && isThroughServer) return;
             this.$emit('update:args', { ...this.args, isThroughServer });
         },
         setIsWithCredentials(isWithCredentials) {
