@@ -1,5 +1,6 @@
 export default {
     editor: {
+        iconPath: '/src/assets/restapi.svg',
         collection: {
             edit: () => import('./src/components/CollectionEdit.vue'),
             summary: () => import('./src/components/CollectionSummary.vue'),
