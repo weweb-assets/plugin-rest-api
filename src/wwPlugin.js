@@ -34,9 +34,6 @@ export default {
             return { data: null, error: null };
         }
     },
-    test() {
-        return 'yolo';
-    },
     async apiRequest(
         {
             url,
