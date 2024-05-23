@@ -9,7 +9,7 @@ export default {
     /*=============================================m_ÔÔ_m=============================================\
         Collection API
     \================================================================================================*/
-    async fetchCollection(collection) {
+    async _fetchCollection(collection) {
         if (collection.mode === 'dynamic' && !collection.config.isThroughServer) {
             try {
                 const { url, method, data, headers, queries, resultKey, dataType, useRawBody, isWithCredentials } =
@@ -33,6 +33,9 @@ export default {
         } else {
             return { data: null, error: null };
         }
+    },
+    test() {
+        return 'yolo';
     },
     async apiRequest(
         {
