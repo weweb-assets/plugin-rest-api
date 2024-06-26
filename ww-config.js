@@ -1,4 +1,7 @@
 export default {
+    features: {
+        datasource: true,
+    },
     editor: {
         collection: {
             edit: () => import('./src/components/CollectionEdit.vue'),
