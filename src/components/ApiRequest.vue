@@ -231,7 +231,7 @@ export default {
             return this.args.useRawBody || false;
         },
         isData() {
-            return ['POST', 'PUT', 'PATCH'].includes(this.method);
+            return ['POST', 'PUT', 'PATCH', 'DELETE'].includes(this.method);
         },
     },
     mounted() {
