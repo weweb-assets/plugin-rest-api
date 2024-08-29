@@ -86,6 +86,8 @@ export default {
     async _apiRequest(url, method, data, headers, params, dataType, useRawBody, isWithCredentials) {
         const payload = computePayload(method, data, headers, params, dataType, useRawBody);
 
+        console.log('TEST', payload)
+
         const response = await axios({
             url,
             method,
