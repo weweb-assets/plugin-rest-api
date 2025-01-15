@@ -23,7 +23,7 @@ export default {
             },
             copilot: {
                 description: 'Make a REST API request with configurable method, URL, headers, and data',
-                returns: 'object',
+                returns: 'object - same format as axios response (status,statusText,data,headers,config,request)',
                 schema: {
                     url: {
                         type: 'string',
