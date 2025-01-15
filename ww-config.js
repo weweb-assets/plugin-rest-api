@@ -33,7 +33,7 @@ export default {
                     method: {
                         type: 'string',
                         description: 'HTTP method (GET, POST, PUT, PATCH, DELETE, OPTIONS)',
-                        bindable: true
+                        bindable: false
                     },
                     data: {
                         type: 'array',
@@ -53,12 +53,12 @@ export default {
                     dataType: {
                         type: 'string',
                         description: 'Content-Type header for the request',
-                        bindable: true
+                        bindable: false
                     },
                     isThroughServer: {
                         type: 'boolean',
                         description: 'Whether to proxy the request through WeWeb server to bypass CORS',
-                        bindable: true
+                        bindable: false
                     },
                     isWithCredentials: {
                         type: 'boolean',
@@ -68,7 +68,7 @@ export default {
                     useRawBody: {
                         type: 'boolean',
                         description: 'Whether to send data as raw body instead of key-value pairs',
-                        bindable: true
+                        bindable: false
                     }
                 }
             },
