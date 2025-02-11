@@ -22,8 +22,8 @@ export default {
                 return !!url && !!method;
             },
             copilot: {
-                description: 'Request any REST API endpoint',
-                returns: 'any',
+                description: 'Make a REST API request using axios with configurable method, URL, headers, and data',
+                returns: 'object - same format as axios response (status,statusText,data,headers,config,request)',
                 schema: {
                     url: {
                         type: 'string',
@@ -33,7 +33,7 @@ export default {
                     method: {
                         type: 'string',
                         description: 'The HTTP method to use',
-                        bindable: true,
+                        bindable: false,
                     },
                     data: {
                         type: 'Array<{key: string, value: string} or any if raw body is used',
@@ -58,7 +58,8 @@ export default {
                     },
                     isThroughServer: {
                         type: 'boolean',
-                        description: 'Whether to send the request through the WeWeb server to avoid CORS issues',
+                        description:
+                            'Whether to send the request through the WeWeb server to avoid CORS issues, use with caution, only when you know the request will fail due to CORS',
                         bindable: true,
                     },
                     useRawBody: {
@@ -69,7 +70,8 @@ export default {
                     },
                     isWithCredentials: {
                         type: 'boolean',
-                        description: 'Whether to send credentials with the request, such as cookies',
+                        description:
+                            'Whether to send credentials with the request, such as cookies, cannot be used with isThroughServer, use with caution, many API will fail if you enable this',
                         bindable: true,
                     },
                 },
