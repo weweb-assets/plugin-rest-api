@@ -54,7 +54,7 @@ export default {
                     dataType: {
                         type: 'string',
                         description: 'The content type for the request',
-                        bindable: true,
+                        bindable: false,
                     },
                     isThroughServer: {
                         type: 'boolean',
