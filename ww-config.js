@@ -23,8 +23,7 @@ export default {
             },
             copilot: {
                 description: 'Make a REST API request using axios with configurable method, URL, headers, and data',
-                returns:
-                    'if isThroughServer is used then: object - same format as axios response (status,statusText,data,headers,config,request) / else: any - data from the response',
+                returns: 'any - The response data from the request',
                 schema: {
                     url: {
                         type: 'string',
@@ -60,7 +59,7 @@ export default {
                     isThroughServer: {
                         type: 'boolean',
                         description:
-                            'Whether to send the request through the WeWeb server to avoid CORS issues, use with caution, only when you know the request will fail due to CORS',
+                            'Whether to send the request through the WeWeb server to avoid CORS issues, use with caution, only when you know the request will fail due to CORS. This option will change the returns format to the axios response format (status,statusText,data,headers,config,request)',
                         bindable: true,
                     },
                     useRawBody: {
