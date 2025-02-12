@@ -23,7 +23,8 @@ export default {
             },
             copilot: {
                 description: 'Make a REST API request using axios with configurable method, URL, headers, and data',
-                returns: 'object - same format as axios response (status,statusText,data,headers,config,request)',
+                returns:
+                    'if isThroughServer is used then: object - same format as axios response (status,statusText,data,headers,config,request) / else: any - data from the response',
                 schema: {
                     url: {
                         type: 'string',
