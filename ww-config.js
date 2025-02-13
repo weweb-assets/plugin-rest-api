@@ -23,7 +23,7 @@ export default {
             },
             copilot: {
                 description: 'Make a REST API request using axios with configurable method, URL, headers, and data',
-                returns: 'any - The result of response.data from the request',
+                returns: `any - This action performs an HTTP request using axios and returns response.data directly. The returned value structure depends on the API being called. Access the result using context.workflow['api_request'].result followed by the specific API's response structure.`,
                 schema: {
                     url: {
                         type: 'string',
