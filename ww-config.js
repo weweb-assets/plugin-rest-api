@@ -22,8 +22,8 @@ export default {
                 return !!url && !!method;
             },
             copilot: {
-                description: 'Make a REST API request using axios with configurable method, URL, headers, and data',
-                returns: `any - This action performs an HTTP request using axios and returns response.data directly. The returned value structure depends on the API being called. Access the result using context.workflow['api_request'].result followed by the specific API's response structure.`,
+                description: 'Make a REST API request with configurable method, URL, headers, and data',
+                returns: `any - This action performs an HTTP request and returns the response body payload directly. The returned value structure depends on the API being called.`,
                 schema: {
                     url: {
                         type: 'string',
@@ -35,10 +35,20 @@ export default {
                         description: 'The HTTP method to use',
                         bindable: false,
                     },
-                    data: {
-                        type: 'Array<{key: string, value: string} or any if raw body is used',
+                    useRawBody: {
+                        type: 'boolean',
                         description:
-                            'The data to send, the array will be converted to an object, both key and value can be bound to a formula. You can use a different format by using the raw body option, you can then bind the whole property.',
+                            'Controls how the data field is processed:\n' +
+                            'false (default): Use UI-friendly key-value pairs array format\n' +
+                            'true: Send data field content directly without transformation. When enabled, the data field MUST be bound to a formula returning your payload structure.',
+                        bindable: true,
+                    },
+                    data: {
+                        type: 'Array<{key: string, value: string}> | any',
+                        description:
+                            'How to send request data:\n' +
+                            '1. Default mode (UI-friendly): Provide data as an array of key-value pairs. Example: [{key: "name", value: "John"}] will be converted to {name: "John"}\n' +
+                            '2. Raw body mode: When enabled, data MUST be bound to a formula returning the exact structure to send. Example: =({name: "John", age: 25})',
                         bindable: true,
                     },
                     headers: {
@@ -60,12 +70,6 @@ export default {
                         type: 'boolean',
                         description:
                             'Whether to send the request through the WeWeb server to avoid CORS issues, use with caution, only when you know the request will fail due to CORS. This option will change the returns format to the whole response object instead (status,statusText,data,headers,config,request)',
-                        bindable: true,
-                    },
-                    useRawBody: {
-                        type: 'boolean',
-                        description:
-                            "Whether to send the data without any transformation, required if data doesn't fit the key-value array format",
                         bindable: true,
                     },
                     isWithCredentials: {
