@@ -23,7 +23,7 @@ export default {
             },
             copilot: {
                 description: 'Make a REST API request with configurable method, URL, headers, and data',
-                returns: `any - This action performs an HTTP request and returns the response body payload directly. The returned value structure depends on the API being called.`,
+                returns: `any - response body directly (the action automatically extracts the response body). Access the result using context.workflow['action_ref'].result (NOT .result.data as the data property is already extracted). The returned value structure depends on the API being called.`,
                 schema: {
                     url: {
                         type: 'string',
@@ -69,7 +69,7 @@ export default {
                     isThroughServer: {
                         type: 'boolean',
                         description:
-                            'Whether to send the request through the WeWeb server to avoid CORS issues, use with caution, only when you know the request will fail due to CORS. This option will change the returns format to the whole response object instead (status,statusText,data,headers,config,request)',
+                            'Whether to send the request through the WeWeb server to avoid CORS issues, use with caution, only when you know the request will fail due to CORS. This option will change the returns format to the whole response object instead (status,statusText,data,headers,config,request), body will not be automatically extracted anymore',
                         bindable: true,
                     },
                     isWithCredentials: {
