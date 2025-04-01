@@ -150,11 +150,44 @@
     </wwEditorFormRow>
     <wwEditorFormRow v-if="!isThroughServer">
         <div class="flex items-center">
-            <wwEditorInputSwitch :model-value="isWithCredentials" @update:modelValue="setIsWithCredentials" />
-            <div class="body-2 ml-2">Send credentials</div>
-            <wwEditorQuestionMark tooltip-position="top-left" tooltip-name="rest-api-credentials" class="ml-auto" />
+            <wwEditorInputSwitch
+                :model-value="isWithCredentials && !useStreaming"
+                @update:modelValue="setIsWithCredentials"
+                :disabled="useStreaming"
+            />
+            <div class="body-sm ml-2">Send credentials</div>
+            <wwEditorQuestionMark
+                tooltip-position="top-left"
+                :forced-content="useStreaming ? 'This option cannot be used with streamed requests' : ''"
+                tooltip-name="rest-api-credentials"
+                class="ml-auto"
+            />
         </div>
     </wwEditorFormRow>
+    <wwEditorFormRow>
+        <div class="flex items-center">
+            <wwEditorInputSwitch :model-value="useStreaming" @update:modelValue="setUseStreaming" />
+            <div class="body-sm ml-2">Stream response</div>
+            <wwEditorQuestionMark
+                tooltip-position="top-left"
+                forced-content="The response will be streamed in real-time. You can use the stream variable to receive the data. This requires the server to support streaming responses."
+                class="ml-auto"
+            />
+        </div>
+    </wwEditorFormRow>
+    <wwEditorInputRow
+        v-if="useStreaming"
+        label="Stream variable"
+        placeholder="Select an array variable"
+        type="select"
+        :actions="[{ icon: 'plus', label: 'Create variable', onAction: createWwVariable }]"
+        :options="wwVariableOptions"
+        :model-value="streamVariableId"
+        @update:modelValue="setStreamVariableId"
+        @action="action => action?.onAction()"
+        required
+        tooltip="The array variable that will receive the stream data"
+    />
 </template>
 
 <script>
@@ -172,10 +205,17 @@ export default {
                 dataType: null,
                 isThroughServer: false,
                 isWithCredentials: false,
+                useStreaming: false,
+                streamVariableId: null,
             }),
         },
     },
     emits: ['update:args'],
+    setup() {
+        const { website: websiteVariables, components: componentVariables } = wwLib.wwVariable.useEditorVariables();
+
+        return { websiteVariables, componentVariables };
+    },
     data() {
         return {
             dataChoices: [
@@ -230,8 +270,29 @@ export default {
         useRawBody() {
             return this.args.useRawBody || false;
         },
+        useStreaming() {
+            return this.args.useStreaming || false;
+        },
+        streamVariableId() {
+            return this.args.streamVariableId;
+        },
         isData() {
             return ['POST', 'PUT', 'PATCH', 'DELETE'].includes(this.method);
+        },
+        wwVariables() {
+            console.log(this.websiteVariables, this.componentVariables);
+
+            return [
+                ...(this.websiteVariables ? Object.values(this.websiteVariables) : []),
+                ...(this.componentVariables ? Object.values(this.componentVariables) : []),
+            ];
+        },
+        wwVariableOptions() {
+            return this.wwVariables.map(variable => ({
+                label: variable.name,
+                value: variable.id,
+                icon: variable.type,
+            }));
         },
     },
     mounted() {
@@ -269,6 +330,21 @@ export default {
         },
         setUseRawBody(useRawBody) {
             this.$emit('update:args', { ...this.args, useRawBody, data: useRawBody ? null : [] });
+        },
+        setUseStreaming(useStreaming) {
+            this.$emit('update:args', {
+                ...this.args,
+                useStreaming,
+                isWithCredentials: useStreaming ? false : this.isWithCredentials,
+            });
+        },
+        setStreamVariableId(streamVariableId) {
+            this.$emit('update:args', { ...this.args, streamVariableId });
+        },
+        createWwVariable() {
+            wwLib.wwPopupSidebars.open({ name: 'NAVIGATOR' });
+            wwLib.$emit('wwTopBar:navigator:tab', 'data');
+            wwLib.$emit('wwTopBar:navigator:data:variables:set', null);
         },
     },
 };
