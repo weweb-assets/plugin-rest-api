@@ -52,22 +52,6 @@ export default {
     ) {
         /* wwEditor:start */
         try {
-            wwUtils?.log('debug', '[REST API] Input parameters', {
-                type: 'debug',
-                preview: {
-                    url,
-                    method,
-                    data: typeof data === 'undefined' ? 'undefined' : data === null ? 'null' : data,
-                    headers: typeof headers === 'undefined' ? 'undefined' : headers === null ? 'null' : headers,
-                    params: typeof params === 'undefined' ? 'undefined' : params === null ? 'null' : params,
-                    dataType,
-                    useRawBody,
-                    isWithCredentials,
-                    useStreaming,
-                    streamVariableId,
-                },
-            });
-
             const payload = computePayload(method, data, headers, params, dataType, useRawBody, wwUtils);
             if (wwUtils) {
                 wwUtils.log(
@@ -157,25 +141,9 @@ export default {
         wwUtils
     ) {
         try {
-            wwUtils?.log('debug', '[REST API Stream] Starting stream request', {
-                type: 'debug',
-                preview: {
-                    url,
-                    method,
-                    data: typeof data === 'undefined' ? 'undefined' : data === null ? 'null' : data,
-                    headers: typeof headers === 'undefined' ? 'undefined' : headers === null ? 'null' : headers,
-                    params: typeof params === 'undefined' ? 'undefined' : params === null ? 'null' : params,
-                },
-            });
-
             wwLib.wwVariable.updateValue(streamVariableId, []);
 
             const payload = computePayload(method, data, headers, params, dataType, useRawBody, wwUtils);
-
-            wwUtils?.log('debug', '[REST API Stream] Computed payload', {
-                type: 'debug',
-                preview: payload,
-            });
 
             const streamHeaders = {
                 ...payload.headers,
@@ -235,13 +203,6 @@ export default {
                             if (line) {
                                 const parsedData = JSON.parse(line);
                                 const currentData = wwLib.wwVariable.getValue(streamVariableId) || [];
-                                wwUtils?.log('debug', '[REST API Stream] Received chunk', {
-                                    type: 'debug',
-                                    preview: {
-                                        parsedData,
-                                        currentDataType: Array.isArray(currentData) ? 'array' : typeof currentData,
-                                    },
-                                });
                                 wwLib.wwVariable.updateValue(streamVariableId, [...currentData, parsedData]);
                             }
                         } catch (parseError) {
@@ -294,18 +255,6 @@ export default {
 
 function computePayload(method, data, headers, params, dataType, useRawBody, wwUtils) {
     try {
-        wwUtils?.log('debug', '[REST API] computePayload input', {
-            type: 'debug',
-            preview: {
-                method,
-                data: typeof data === 'undefined' ? 'undefined' : data === null ? 'null' : data,
-                headers: typeof headers === 'undefined' ? 'undefined' : headers === null ? 'null' : headers,
-                params: typeof params === 'undefined' ? 'undefined' : params === null ? 'null' : params,
-                dataType,
-                useRawBody,
-            },
-        });
-
         let processedData = data;
         if (!useRawBody) {
             processedData = computeList(data, 'data', wwUtils);
@@ -340,15 +289,6 @@ function computePayload(method, data, headers, params, dataType, useRawBody, wwU
             ...computeList(headers, 'headers', wwUtils),
         };
 
-        wwUtils?.log('debug', '[REST API] computePayload result', {
-            type: 'debug',
-            preview: {
-                data: processedData,
-                params: processedParams,
-                headers: processedHeaders,
-            },
-        });
-
         return {
             data: processedData,
             params: processedParams,
@@ -368,15 +308,6 @@ function computePayload(method, data, headers, params, dataType, useRawBody, wwU
 
 function computeList(list, label, wwUtils) {
     try {
-        wwUtils?.log('debug', `[REST API] computeList for ${label}`, {
-            type: 'debug',
-            preview: {
-                list: typeof list === 'undefined' ? 'undefined' : list === null ? 'null' : list,
-                type: typeof list,
-                isArray: Array.isArray(list),
-            },
-        });
-
         if (!list) return {};
 
         if (!Array.isArray(list)) {
@@ -397,11 +328,6 @@ function computeList(list, label, wwUtils) {
             }
             return { ...obj, [item.key]: item.value };
         }, {});
-
-        wwUtils?.log('debug', `[REST API] computeList result for ${label}`, {
-            type: 'debug',
-            preview: result,
-        });
 
         return result;
     } catch (error) {
