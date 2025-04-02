@@ -51,25 +51,52 @@ export default {
         wwUtils
     ) {
         /* wwEditor:start */
-        const payload = computePayload(method, data, headers, params, dataType, useRawBody);
-        if (wwUtils) {
-            wwUtils.log(
-                'info',
-                `Executing request ${method} on ${url} ${isThroughServer ? '(through weweb server)' : ''}${
-                    useStreaming ? ' (streaming)' : ''
-                }`,
-                {
-                    type: 'request',
-                    preview: {
-                        Data: payload.data,
-                        Headers: payload.headers,
-                        'Query string': payload.params,
-                    },
-                }
-            );
-        }
+        try {
+            wwUtils?.log('debug', '[REST API] Input parameters', {
+                type: 'debug',
+                preview: {
+                    url,
+                    method,
+                    data: typeof data === 'undefined' ? 'undefined' : data === null ? 'null' : data,
+                    headers: typeof headers === 'undefined' ? 'undefined' : headers === null ? 'null' : headers,
+                    params: typeof params === 'undefined' ? 'undefined' : params === null ? 'null' : params,
+                    dataType,
+                    useRawBody,
+                    isWithCredentials,
+                    useStreaming,
+                    streamVariableId,
+                },
+            });
 
+            const payload = computePayload(method, data, headers, params, dataType, useRawBody, wwUtils);
+            if (wwUtils) {
+                wwUtils.log(
+                    'info',
+                    `Executing request ${method} on ${url} ${isThroughServer ? '(through weweb server)' : ''}${
+                        useStreaming ? ' (streaming)' : ''
+                    }`,
+                    {
+                        type: 'request',
+                        preview: {
+                            Data: payload.data,
+                            Headers: payload.headers,
+                            'Query string': payload.params,
+                        },
+                    }
+                );
+            }
+        } catch (err) {
+            wwUtils?.log('error', '[REST API] Error in preparing request', {
+                type: 'error',
+                preview: {
+                    error: err.message,
+                    stack: err.stack,
+                },
+            });
+            throw err;
+        }
         /* wwEditor:end */
+
         if (useStreaming) {
             if (isThroughServer) {
                 throw new Error('Streaming is not supported with server-side requests.');
@@ -130,9 +157,25 @@ export default {
         wwUtils
     ) {
         try {
+            wwUtils?.log('debug', '[REST API Stream] Starting stream request', {
+                type: 'debug',
+                preview: {
+                    url,
+                    method,
+                    data: typeof data === 'undefined' ? 'undefined' : data === null ? 'null' : data,
+                    headers: typeof headers === 'undefined' ? 'undefined' : headers === null ? 'null' : headers,
+                    params: typeof params === 'undefined' ? 'undefined' : params === null ? 'null' : params,
+                },
+            });
+
             wwLib.wwVariable.updateValue(streamVariableId, []);
 
-            const payload = computePayload(method, data, headers, params, dataType, useRawBody);
+            const payload = computePayload(method, data, headers, params, dataType, useRawBody, wwUtils);
+
+            wwUtils?.log('debug', '[REST API Stream] Computed payload', {
+                type: 'debug',
+                preview: payload,
+            });
 
             const streamHeaders = {
                 ...payload.headers,
@@ -192,6 +235,13 @@ export default {
                             if (line) {
                                 const parsedData = JSON.parse(line);
                                 const currentData = wwLib.wwVariable.getValue(streamVariableId) || [];
+                                wwUtils?.log('debug', '[REST API Stream] Received chunk', {
+                                    type: 'debug',
+                                    preview: {
+                                        parsedData,
+                                        currentDataType: Array.isArray(currentData) ? 'array' : typeof currentData,
+                                    },
+                                });
                                 wwLib.wwVariable.updateValue(streamVariableId, [...currentData, parsedData]);
                             }
                         } catch (parseError) {
@@ -222,7 +272,10 @@ export default {
         } catch (error) {
             wwUtils?.log('error', '[REST API Stream] Error', {
                 type: 'error',
-                preview: error,
+                preview: {
+                    message: error.message,
+                    stack: error.stack,
+                },
             });
             throw error;
         }
@@ -239,44 +292,127 @@ export default {
     /* wwEditor:end */
 };
 
-function computePayload(method, data, headers, params, dataType, useRawBody) {
-    if (!useRawBody) {
-        data = computeList(data);
+function computePayload(method, data, headers, params, dataType, useRawBody, wwUtils) {
+    try {
+        wwUtils?.log('debug', '[REST API] computePayload input', {
+            type: 'debug',
+            preview: {
+                method,
+                data: typeof data === 'undefined' ? 'undefined' : data === null ? 'null' : data,
+                headers: typeof headers === 'undefined' ? 'undefined' : headers === null ? 'null' : headers,
+                params: typeof params === 'undefined' ? 'undefined' : params === null ? 'null' : params,
+                dataType,
+                useRawBody,
+            },
+        });
 
-        switch (dataType) {
-            case 'application/x-www-form-urlencoded': {
-                data = qs.stringify(data);
-                break;
+        let processedData = data;
+        if (!useRawBody) {
+            processedData = computeList(data, 'data', wwUtils);
+
+            switch (dataType) {
+                case 'application/x-www-form-urlencoded': {
+                    processedData = qs.stringify(processedData);
+                    break;
+                }
+                case 'multipart/form-data': {
+                    const formData = new FormData();
+                    for (const key in processedData) formData.append(key, processedData[key]);
+                    processedData = formData;
+                    break;
+                }
+                default:
+                    break;
             }
-            case 'multipart/form-data': {
-                const formData = new FormData();
-                for (const key in data) formData.append(key, data[key]);
-                data = formData;
-                break;
-            }
+        }
+
+        switch (method) {
+            case 'OPTIONS':
+            case 'GET':
+            case 'DELETE':
             default:
                 break;
         }
-    }
 
-    switch (method) {
-        case 'OPTIONS':
-        case 'GET':
-        case 'DELETE':
-        default:
-            break;
-    }
-
-    return {
-        data,
-        params: computeList(params),
-        headers: {
+        const processedParams = computeList(params, 'params', wwUtils);
+        const processedHeaders = {
             'content-type': dataType || 'application/json',
-            ...computeList(headers),
-        },
-    };
+            ...computeList(headers, 'headers', wwUtils),
+        };
+
+        wwUtils?.log('debug', '[REST API] computePayload result', {
+            type: 'debug',
+            preview: {
+                data: processedData,
+                params: processedParams,
+                headers: processedHeaders,
+            },
+        });
+
+        return {
+            data: processedData,
+            params: processedParams,
+            headers: processedHeaders,
+        };
+    } catch (error) {
+        wwUtils?.log('error', '[REST API] Error in computePayload', {
+            type: 'error',
+            preview: {
+                error: error.message,
+                stack: error.stack,
+            },
+        });
+        throw error;
+    }
 }
 
-function computeList(list) {
-    return (list || []).reduce((obj, item) => ({ ...obj, [item.key]: item.value }), {});
+function computeList(list, label, wwUtils) {
+    try {
+        wwUtils?.log('debug', `[REST API] computeList for ${label}`, {
+            type: 'debug',
+            preview: {
+                list: typeof list === 'undefined' ? 'undefined' : list === null ? 'null' : list,
+                type: typeof list,
+                isArray: Array.isArray(list),
+            },
+        });
+
+        if (!list) return {};
+
+        if (!Array.isArray(list)) {
+            wwUtils?.log('warn', `[REST API] computeList expected array but got ${typeof list}`, {
+                type: 'warn',
+                preview: list,
+            });
+            return {};
+        }
+
+        const result = (list || []).reduce((obj, item) => {
+            if (!item || typeof item !== 'object' || !('key' in item)) {
+                wwUtils?.log('warn', `[REST API] computeList skipping invalid item`, {
+                    type: 'warn',
+                    preview: item,
+                });
+                return obj;
+            }
+            return { ...obj, [item.key]: item.value };
+        }, {});
+
+        wwUtils?.log('debug', `[REST API] computeList result for ${label}`, {
+            type: 'debug',
+            preview: result,
+        });
+
+        return result;
+    } catch (error) {
+        wwUtils?.log('error', `[REST API] Error in computeList for ${label}`, {
+            type: 'error',
+            preview: {
+                error: error.message,
+                stack: error.stack,
+                list: typeof list === 'undefined' ? 'undefined' : list === null ? 'null' : list,
+            },
+        });
+        throw new Error(`Failed to process ${label}: ${error.message}`);
+    }
 }
