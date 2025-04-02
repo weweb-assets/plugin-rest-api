@@ -195,7 +195,6 @@ export default {
 
                         // Handle potential [DONE] signal in SSE
                         if (line === '[DONE]') {
-                            wwUtils?.log('info', '[REST API Stream] Received [DONE] signal.');
                             break;
                         }
 
@@ -226,8 +225,6 @@ export default {
                     wwLib.wwVariable.updateValue(streamVariableId, [...currentData, buffer.trim()]);
                 }
             }
-
-            wwUtils?.log('info', '[REST API Stream] Stream completed', { type: 'response' });
 
             return wwLib.wwVariable.getValue(streamVariableId);
         } catch (error) {
