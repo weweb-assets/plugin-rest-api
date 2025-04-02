@@ -280,19 +280,19 @@ export default {
             return ['POST', 'PUT', 'PATCH', 'DELETE'].includes(this.method);
         },
         wwVariables() {
-            console.log(this.websiteVariables, this.componentVariables);
-
             return [
                 ...(this.websiteVariables ? Object.values(this.websiteVariables) : []),
                 ...(this.componentVariables ? Object.values(this.componentVariables) : []),
             ];
         },
         wwVariableOptions() {
-            return this.wwVariables.map(variable => ({
-                label: variable.name,
-                value: variable.id,
-                icon: variable.type,
-            }));
+            return this.wwVariables
+                .filter(variable => variable.type === 'array')
+                .map(variable => ({
+                    label: variable.name,
+                    value: variable.id,
+                    icon: variable.type,
+                }));
         },
     },
     mounted() {
