@@ -138,7 +138,7 @@
                 v-if="dataType === 'multipart/form-data'"
                 tooltip-position="top-left"
                 forced-content="Not allowed with content-type multipart/form-data"
-                class="ml-2 text-yellow-500"
+                class="ml-2 content-warning"
             />
             <wwEditorQuestionMark
                 v-else
@@ -150,18 +150,9 @@
     </wwEditorFormRow>
     <wwEditorFormRow v-if="!isThroughServer">
         <div class="flex items-center">
-            <wwEditorInputSwitch
-                :model-value="isWithCredentials && !useStreaming"
-                @update:modelValue="setIsWithCredentials"
-                :disabled="useStreaming"
-            />
-            <div class="body-sm ml-2">Send credentials</div>
-            <wwEditorQuestionMark
-                tooltip-position="top-left"
-                :forced-content="useStreaming ? 'This option cannot be used with streamed requests' : ''"
-                tooltip-name="rest-api-credentials"
-                class="ml-auto"
-            />
+            <wwEditorInputSwitch :model-value="isWithCredentials" @update:modelValue="setIsWithCredentials" />
+            <div class="body-2 ml-2">Send credentials</div>
+            <wwEditorQuestionMark tooltip-position="top-left" tooltip-name="rest-api-credentials" class="ml-auto" />
         </div>
     </wwEditorFormRow>
     <wwEditorFormRow>
@@ -335,7 +326,7 @@ export default {
             this.$emit('update:args', {
                 ...this.args,
                 useStreaming,
-                isWithCredentials: useStreaming ? false : this.isWithCredentials,
+                isThroughServer: useStreaming ? false : this.isThroughServer,
             });
         },
         setStreamVariableId(streamVariableId) {

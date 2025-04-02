@@ -45,6 +45,8 @@ export default {
             isThroughServer,
             useRawBody = false,
             isWithCredentials = false,
+            useStreaming = false,
+            streamVariableId = null,
         },
         wwUtils
     ) {
@@ -53,7 +55,9 @@ export default {
         if (wwUtils) {
             wwUtils.log(
                 'info',
-                `Executing request ${method} on ${url} ${isThroughServer ? '(through weweb server)' : ''}`,
+                `Executing request ${method} on ${url} ${isThroughServer ? '(through weweb server)' : ''}${
+                    useStreaming ? ' (streaming)' : ''
+                }`,
                 {
                     type: 'request',
                     preview: {
@@ -66,7 +70,23 @@ export default {
         }
 
         /* wwEditor:end */
-        if (isThroughServer) {
+        if (useStreaming) {
+            if (isThroughServer) {
+                throw new Error('Streaming is not supported with server-side requests.');
+            }
+            return await this._streamApiRequest(
+                url,
+                method,
+                data,
+                headers,
+                params,
+                dataType,
+                useRawBody,
+                isWithCredentials,
+                streamVariableId,
+                wwUtils
+            );
+        } else if (isThroughServer) {
             const websiteId = wwLib.wwWebsiteData.getInfo().id;
             const pluginURL = wwLib.wwApiRequests._getPluginsUrl();
 
@@ -97,13 +117,123 @@ export default {
 
         return response.data;
     },
+    async _streamApiRequest(
+        url,
+        method,
+        data,
+        headers,
+        params,
+        dataType,
+        useRawBody,
+        isWithCredentials,
+        streamVariableId,
+        wwUtils
+    ) {
+        try {
+            wwLib.wwVariable.updateValue(streamVariableId, []);
+
+            const payload = computePayload(method, data, headers, params, dataType, useRawBody);
+
+            const streamHeaders = {
+                ...payload.headers,
+                Accept: 'text/event-stream',
+            };
+
+            const response = await fetch(url, {
+                method,
+                headers: streamHeaders,
+                body: ['GET', 'HEAD'].includes(method) ? undefined : payload.data,
+                credentials: isWithCredentials ? 'include' : 'same-origin',
+            });
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`HTTP error ${response.status}: ${errorText}`);
+            }
+
+            if (!response.body) {
+                throw new Error('ReadableStream not supported in this browser.');
+            }
+
+            const reader = response.body.getReader();
+            const decoder = new TextDecoder();
+            let buffer = '';
+
+            let streamActive = true;
+            while (streamActive) {
+                const { done, value } = await reader.read();
+
+                if (done) {
+                    streamActive = false;
+                    break;
+                }
+
+                const chunk = decoder.decode(value, { stream: true });
+                buffer += chunk;
+
+                let newlineIndex;
+                while ((newlineIndex = buffer.indexOf('\n')) >= 0) {
+                    let line = buffer.slice(0, newlineIndex).trim();
+                    buffer = buffer.slice(newlineIndex + 1);
+
+                    if (line) {
+                        // Handle SSE 'data: ' prefix
+                        if (line.startsWith('data: ')) {
+                            line = line.substring(5).trim();
+                        }
+
+                        // Handle potential [DONE] signal in SSE
+                        if (line === '[DONE]') {
+                            wwUtils?.log('info', '[REST API Stream] Received [DONE] signal.');
+                            break;
+                        }
+
+                        try {
+                            if (line) {
+                                const parsedData = JSON.parse(line);
+                                const currentData = wwLib.wwVariable.getValue(streamVariableId) || [];
+                                wwLib.wwVariable.updateValue(streamVariableId, [...currentData, parsedData]);
+                            }
+                        } catch (parseError) {
+                            wwUtils?.log('warn', `[REST API Stream] Non-JSON data line: ${line}`, { parseError });
+                            // For non-JSON data, still add as string
+                            const currentData = wwLib.wwVariable.getValue(streamVariableId) || [];
+                            wwLib.wwVariable.updateValue(streamVariableId, [...currentData, line]);
+                        }
+                    }
+                }
+            }
+
+            if (buffer.trim()) {
+                try {
+                    const parsedData = JSON.parse(buffer.trim());
+                    const currentData = wwLib.wwVariable.getValue(streamVariableId) || [];
+                    wwLib.wwVariable.updateValue(streamVariableId, [...currentData, parsedData]);
+                } catch (e) {
+                    // If not JSON, add as string
+                    const currentData = wwLib.wwVariable.getValue(streamVariableId) || [];
+                    wwLib.wwVariable.updateValue(streamVariableId, [...currentData, buffer.trim()]);
+                }
+            }
+
+            wwUtils?.log('info', '[REST API Stream] Stream completed', { type: 'response' });
+
+            return wwLib.wwVariable.getValue(streamVariableId);
+        } catch (error) {
+            wwUtils?.log('error', '[REST API Stream] Error', {
+                type: 'error',
+                preview: error,
+            });
+            throw error;
+        }
+    },
     /* wwEditor:start */
     getCollectionErrorDetails(collection) {
         return (
             collection.error &&
             collection.error.message &&
             collection.error.message === 'Network Error' &&
-            '⚠️ There is a network error. That can happen when the server you are trying to call is down, or it is not found, or there is a CORS issue because the server expects a call from another server and not a frontend like WeWeb. If the network error is caused by a CORS issue, you may contact the administrator of the API to allow the “weweb.io” domain to make requests or, if this is not possible, consider enabling the "Proxy the request to bypass CORS issues" option before clicking on "Continue".'
+            '⚠️ There is a network error. That can happen when the server you are trying to call is down, or it is not found, or there is a CORS issue because the server expects a call from another server and not a frontend like WeWeb. If the network error is caused by a CORS issue, you may contact the administrator of the API to allow the "weweb.io" domain to make requests or, if this is not possible, consider enabling the "Proxy the request to bypass CORS issues" option before clicking on "Continue".'
         );
     },
     /* wwEditor:end */
