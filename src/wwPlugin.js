@@ -140,6 +140,20 @@ export default {
         streamVariableId,
         wwUtils
     ) {
+        console.log(
+            'streamApiRequest',
+            url,
+            method,
+            data,
+            headers,
+            params,
+            dataType,
+            useRawBody,
+            isWithCredentials,
+            streamVariableId,
+            wwUtils
+        );
+
         try {
             wwLib.wwVariable.updateValue(streamVariableId, []);
 
