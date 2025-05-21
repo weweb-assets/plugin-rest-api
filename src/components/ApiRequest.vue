@@ -151,7 +151,7 @@
     <wwEditorFormRow v-if="!isThroughServer">
         <div class="flex items-center">
             <wwEditorInputSwitch :model-value="isWithCredentials" @update:modelValue="setIsWithCredentials" />
-            <div class="body-2 ml-2">Send credentials</div>
+            <div class="body-sm ml-2">Send credentials</div>
             <wwEditorQuestionMark tooltip-position="top-left" tooltip-name="rest-api-credentials" class="ml-auto" />
         </div>
     </wwEditorFormRow>

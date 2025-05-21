@@ -187,42 +187,108 @@ export default {
                     let line = buffer.slice(0, newlineIndex).trim();
                     buffer = buffer.slice(newlineIndex + 1);
 
-                    if (line) {
-                        // Handle SSE 'data: ' prefix
-                        if (line.startsWith('data: ')) {
-                            line = line.substring(5).trim();
-                        }
+                    if (!line) continue; // Skip empty lines
 
-                        // Handle potential [DONE] signal in SSE
-                        if (line === '[DONE]') {
+                    if (line.startsWith('data:')) {
+                        const dataContent = line.substring(5).trim();
+                        if (dataContent === '[DONE]') {
+                            streamActive = false;
+                            wwUtils?.log('info', '[REST API Stream] Received [DONE] in data: line.');
                             break;
                         }
-
-                        try {
-                            if (line) {
-                                const parsedData = JSON.parse(line);
+                        if (dataContent) {
+                            try {
+                                const parsedData = JSON.parse(dataContent);
                                 const currentData = wwLib.wwVariable.getValue(streamVariableId) || [];
                                 wwLib.wwVariable.updateValue(streamVariableId, [...currentData, parsedData]);
+                            } catch (parseError) {
+                                wwUtils?.log('warn', `[REST API Stream] Non-JSON data in data: line: ${dataContent}`, {
+                                    parseError,
+                                });
+                                const currentData = wwLib.wwVariable.getValue(streamVariableId) || [];
+                                wwLib.wwVariable.updateValue(streamVariableId, [...currentData, dataContent]);
                             }
+                        }
+                    } else if (line === '[DONE]') {
+                        streamActive = false;
+                        wwUtils?.log('info', '[REST API Stream] Received [DONE] on its own line.');
+                        break;
+                    } else if (
+                        line.startsWith('id:') ||
+                        line.startsWith('event:') ||
+                        line.startsWith('retry:') ||
+                        line.startsWith(':')
+                    ) {
+                        // SSE metadata line (but not 'data:'). Ignore it.
+                        wwUtils?.log('debug', `[REST API Stream] Ignoring SSE metadata line: ${line}`);
+                    } else {
+                        // Not 'data:', not '[DONE]', and not other known SSE metadata.
+                        // Treat the whole line as a potential payload (e.g., newline-delimited JSON/text).
+                        try {
+                            const parsedData = JSON.parse(line);
+                            const currentData = wwLib.wwVariable.getValue(streamVariableId) || [];
+                            wwLib.wwVariable.updateValue(streamVariableId, [...currentData, parsedData]);
                         } catch (parseError) {
-                            wwUtils?.log('warn', `[REST API Stream] Non-JSON data line: ${line}`, { parseError });
-                            // For non-JSON data, still add as string
+                            wwUtils?.log('debug', `[REST API Stream] Adding raw line as non-JSON: ${line}`, {
+                                parseError,
+                            });
                             const currentData = wwLib.wwVariable.getValue(streamVariableId) || [];
                             wwLib.wwVariable.updateValue(streamVariableId, [...currentData, line]);
                         }
                     }
                 }
+                if (!streamActive) break; // Exit outer while loop if [DONE] was encountered
             }
 
-            if (buffer.trim()) {
-                try {
-                    const parsedData = JSON.parse(buffer.trim());
-                    const currentData = wwLib.wwVariable.getValue(streamVariableId) || [];
-                    wwLib.wwVariable.updateValue(streamVariableId, [...currentData, parsedData]);
-                } catch (e) {
-                    // If not JSON, add as string
-                    const currentData = wwLib.wwVariable.getValue(streamVariableId) || [];
-                    wwLib.wwVariable.updateValue(streamVariableId, [...currentData, buffer.trim()]);
+            // Process any remaining content in the buffer
+            const finalBufferTrimmed = buffer.trim();
+            if (finalBufferTrimmed) {
+                if (finalBufferTrimmed.startsWith('data:')) {
+                    const dataContent = finalBufferTrimmed.substring(5).trim();
+                    if (dataContent && dataContent !== '[DONE]') {
+                        try {
+                            const parsedData = JSON.parse(dataContent);
+                            const currentData = wwLib.wwVariable.getValue(streamVariableId) || [];
+                            wwLib.wwVariable.updateValue(streamVariableId, [...currentData, parsedData]);
+                        } catch (e) {
+                            wwUtils?.log(
+                                'warn',
+                                `[REST API Stream] Failed to parse JSON from final buffer data: line: ${dataContent}`,
+                                { e }
+                            );
+                            const currentData = wwLib.wwVariable.getValue(streamVariableId) || [];
+                            wwLib.wwVariable.updateValue(streamVariableId, [...currentData, dataContent]);
+                        }
+                    } else if (dataContent === '[DONE]') {
+                        wwUtils?.log('info', '[REST API Stream] Received [DONE] in final buffer data: line.');
+                    }
+                } else if (finalBufferTrimmed === '[DONE]') {
+                    wwUtils?.log('info', '[REST API Stream] Received [DONE] as final buffer content.');
+                } else if (
+                    finalBufferTrimmed.startsWith('id:') ||
+                    finalBufferTrimmed.startsWith('event:') ||
+                    finalBufferTrimmed.startsWith('retry:') ||
+                    finalBufferTrimmed.startsWith(':')
+                ) {
+                    wwUtils?.log(
+                        'debug',
+                        `[REST API Stream] Ignoring SSE metadata in final buffer: ${finalBufferTrimmed}`
+                    );
+                } else {
+                    // Treat the whole final buffer content as a potential payload.
+                    try {
+                        const parsedData = JSON.parse(finalBufferTrimmed);
+                        const currentData = wwLib.wwVariable.getValue(streamVariableId) || [];
+                        wwLib.wwVariable.updateValue(streamVariableId, [...currentData, parsedData]);
+                    } catch (e) {
+                        wwUtils?.log(
+                            'debug',
+                            `[REST API Stream] Adding raw final buffer as non-JSON: ${finalBufferTrimmed}`,
+                            { e }
+                        );
+                        const currentData = wwLib.wwVariable.getValue(streamVariableId) || [];
+                        wwLib.wwVariable.updateValue(streamVariableId, [...currentData, finalBufferTrimmed]);
+                    }
                 }
             }
 
