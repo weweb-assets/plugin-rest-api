@@ -2,6 +2,7 @@ export default {
     features: {
         datasource: true,
     },
+    /* wwEditor:start */
     editor: {
         collection: {
             edit: () => import('./src/components/CollectionEdit.vue'),
@@ -11,6 +12,7 @@ export default {
             },
         },
     },
+    /* wwEditor:end */
     actions: [
         {
             name: 'REST API Request',
