@@ -280,8 +280,6 @@ export default {
             return this.wwVariables
                 .filter(variable => variable.type === 'array')
                 .map(variable => {
-                    console.log(variable);
-
                     let label = variable.name;
                     const elementName =
                         variable.componentType && variable.componentType === 'element'
