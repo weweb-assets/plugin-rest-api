@@ -182,6 +182,11 @@
 </template>
 
 <script>
+const getElementName = uid => {
+    const { name } = wwLib.$store.getters['websiteData/getWwObjects'][uid] || { name: 'Element undefined' };
+    return name;
+};
+
 export default {
     props: {
         plugin: { type: Object, required: true },
@@ -283,12 +288,10 @@ export default {
                     let label = variable.name;
                     const elementName =
                         variable.componentType && variable.componentType === 'element'
-                            ? wwLib.wwObjectHelper.getElementLabel(variable.componentId)
+                            ? getElementName(variable.componentUid)
                             : null;
 
                     if (elementName) label = `${elementName} - ${variable.name}`;
-
-                    console.log(label);
 
                     return {
                         label,
