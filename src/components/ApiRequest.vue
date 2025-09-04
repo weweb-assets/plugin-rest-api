@@ -138,7 +138,7 @@
                 v-if="dataType === 'multipart/form-data'"
                 tooltip-position="top-left"
                 forced-content="Not allowed with content-type multipart/form-data"
-                class="ml-2 text-yellow-500"
+                class="ml-2 content-warning"
             />
             <wwEditorQuestionMark
                 v-else
@@ -151,10 +151,34 @@
     <wwEditorFormRow v-if="!isThroughServer">
         <div class="flex items-center">
             <wwEditorInputSwitch :model-value="isWithCredentials" @update:modelValue="setIsWithCredentials" />
-            <div class="body-2 ml-2">Send credentials</div>
+            <div class="body-sm ml-2">Send credentials</div>
             <wwEditorQuestionMark tooltip-position="top-left" tooltip-name="rest-api-credentials" class="ml-auto" />
         </div>
     </wwEditorFormRow>
+    <wwEditorFormRow>
+        <div class="flex items-center">
+            <wwEditorInputSwitch :model-value="useStreaming" @update:modelValue="setUseStreaming" />
+            <div class="body-sm ml-2">Stream response</div>
+            <wwEditorQuestionMark
+                tooltip-position="top-left"
+                forced-content="The response will be streamed in real-time. You can use the stream variable to receive the data. This requires the server to support streaming responses."
+                class="ml-auto"
+            />
+        </div>
+    </wwEditorFormRow>
+    <wwEditorInputRow
+        v-if="useStreaming"
+        label="Stream variable"
+        placeholder="Select an array variable"
+        type="select"
+        :actions="[{ icon: 'plus', label: 'Create variable', onAction: createWwVariable }]"
+        :options="wwVariableOptions"
+        :model-value="streamVariableId"
+        @update:modelValue="setStreamVariableId"
+        @action="action => action?.onAction()"
+        required
+        tooltip="The array variable that will receive the stream data"
+    />
 </template>
 
 <script>
@@ -172,10 +196,17 @@ export default {
                 dataType: null,
                 isThroughServer: false,
                 isWithCredentials: false,
+                useStreaming: false,
+                streamVariableId: null,
             }),
         },
     },
     emits: ['update:args'],
+    setup() {
+        const { website: websiteVariables, components: componentVariables } = wwLib.wwVariable.useEditorVariables();
+
+        return { websiteVariables, componentVariables };
+    },
     data() {
         return {
             dataChoices: [
@@ -230,8 +261,35 @@ export default {
         useRawBody() {
             return this.args.useRawBody || false;
         },
+        useStreaming() {
+            return this.args.useStreaming || false;
+        },
+        streamVariableId() {
+            return this.args.streamVariableId;
+        },
         isData() {
             return ['POST', 'PUT', 'PATCH', 'DELETE'].includes(this.method);
+        },
+        wwVariables() {
+            return [
+                ...(this.websiteVariables ? Object.values(this.websiteVariables) : []),
+                ...(this.componentVariables ? Object.values(this.componentVariables) : []),
+            ];
+        },
+        wwVariableOptions() {
+            return this.wwVariables
+                .filter(variable => variable.type === 'array')
+                .map(variable => {
+                    const labelPrefix = variable.componentType
+                        ? wwLib.wwElement.getComponentLabel(variable.componentType, variable.componentUid)
+                        : null;
+                    const label = labelPrefix ? `${labelPrefix} - ${variable.name}` : variable.name;
+                    return {
+                        label,
+                        value: variable.id,
+                        icon: variable.type,
+                    };
+                });
         },
     },
     mounted() {
@@ -269,6 +327,21 @@ export default {
         },
         setUseRawBody(useRawBody) {
             this.$emit('update:args', { ...this.args, useRawBody, data: useRawBody ? null : [] });
+        },
+        setUseStreaming(useStreaming) {
+            this.$emit('update:args', {
+                ...this.args,
+                useStreaming,
+                isThroughServer: useStreaming ? false : this.isThroughServer,
+            });
+        },
+        setStreamVariableId(streamVariableId) {
+            this.$emit('update:args', { ...this.args, streamVariableId });
+        },
+        createWwVariable() {
+            wwLib.wwPopupSidebars.open({ name: 'NAVIGATOR' });
+            wwLib.$emit('wwTopBar:navigator:tab', 'data');
+            wwLib.$emit('wwTopBar:navigator:data:variables:set', null);
         },
     },
 };

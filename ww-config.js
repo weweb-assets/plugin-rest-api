@@ -80,6 +80,16 @@ export default {
                             'Whether to send credentials with the request, such as cookies, cannot be used with isThroughServer, use with caution, many API will fail if you enable this',
                         bindable: true,
                     },
+                    useStreaming: {
+                        type: 'boolean',
+                        description: 'Whether to use streaming',
+                        bindable: true,
+                    },
+                    streamVariableId: {
+                        type: 'string',
+                        description: 'The variable ID of the array variable that will receive the stream data',
+                        bindable: true,
+                    },
                 },
             },
             /* wwEditor:end */
