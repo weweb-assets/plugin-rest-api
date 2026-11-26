@@ -44,11 +44,7 @@
                 "type": "boolean",
                 "visibleWhen": {
                     "field": "method",
-                    "oneOf": [
-                        "POST",
-                        "PUT",
-                        "PATCH"
-                    ]
+                    "oneOf": ["POST", "PUT", "PATCH"]
                 },
                 "initial": false
             },
@@ -58,11 +54,7 @@
                 "type": "list",
                 "visibleWhen": {
                     "field": "method",
-                    "oneOf": [
-                        "POST",
-                        "PUT",
-                        "PATCH"
-                    ]
+                    "oneOf": ["POST", "PUT", "PATCH"]
                 },
                 "textWhen": {
                     "field": "useRawBody",
@@ -183,11 +175,7 @@
                 ],
                 "visibleWhen": {
                     "field": "method",
-                    "oneOf": [
-                        "POST",
-                        "PUT",
-                        "PATCH"
-                    ]
+                    "oneOf": ["POST", "PUT", "PATCH"]
                 },
                 "updates": [
                     {
@@ -299,12 +287,7 @@
                         "type": "boolean",
                         "visibleWhen": {
                             "field": "method",
-                            "oneOf": [
-                                "POST",
-                                "PUT",
-                                "PATCH",
-                                "DELETE"
-                            ]
+                            "oneOf": ["POST", "PUT", "PATCH", "DELETE"]
                         },
                         "initial": false,
                         "updates": [
@@ -326,12 +309,7 @@
                         "type": "list",
                         "visibleWhen": {
                             "field": "method",
-                            "oneOf": [
-                                "POST",
-                                "PUT",
-                                "PATCH",
-                                "DELETE"
-                            ]
+                            "oneOf": ["POST", "PUT", "PATCH", "DELETE"]
                         },
                         "textWhen": {
                             "field": "useRawBody",
@@ -452,12 +430,7 @@
                         ],
                         "visibleWhen": {
                             "field": "method",
-                            "oneOf": [
-                                "POST",
-                                "PUT",
-                                "PATCH",
-                                "DELETE"
-                            ]
+                            "oneOf": ["POST", "PUT", "PATCH", "DELETE"]
                         },
                         "updates": [
                             {
