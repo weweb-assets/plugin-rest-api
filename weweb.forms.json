@@ -1,0 +1,522 @@
+{
+    "schemaVersion": 1,
+    "features": {
+        "datasource": true
+    },
+    "collection": {
+        "fields": [
+            {
+                "key": "method",
+                "label": "Method",
+                "type": "choice",
+                "required": true,
+                "choices": [
+                    {
+                        "label": "GET",
+                        "value": "GET"
+                    },
+                    {
+                        "label": "POST",
+                        "value": "POST"
+                    },
+                    {
+                        "label": "PUT",
+                        "value": "PUT"
+                    },
+                    {
+                        "label": "PATCH",
+                        "value": "PATCH"
+                    }
+                ],
+                "initial": "GET"
+            },
+            {
+                "key": "url",
+                "label": "URL",
+                "type": "text",
+                "required": true,
+                "placeholder": "https://api-url.com/endpoint",
+                "bindableIn": "dynamicCollection"
+            },
+            {
+                "key": "useRawBody",
+                "label": "Use raw body",
+                "type": "boolean",
+                "visibleWhen": {
+                    "field": "method",
+                    "oneOf": [
+                        "POST",
+                        "PUT",
+                        "PATCH"
+                    ]
+                },
+                "initial": false
+            },
+            {
+                "key": "data",
+                "label": "Fields",
+                "type": "list",
+                "visibleWhen": {
+                    "field": "method",
+                    "oneOf": [
+                        "POST",
+                        "PUT",
+                        "PATCH"
+                    ]
+                },
+                "textWhen": {
+                    "field": "useRawBody",
+                    "equals": true,
+                    "label": "Body"
+                },
+                "item": {
+                    "type": "record",
+                    "fields": [
+                        {
+                            "key": "key",
+                            "label": "Key",
+                            "type": "text",
+                            "placeholder": "Enter a value",
+                            "bindableIn": "dynamicCollection"
+                        },
+                        {
+                            "key": "value",
+                            "label": "Value",
+                            "type": "text",
+                            "placeholder": "Enter a value",
+                            "bindableIn": "dynamicCollection"
+                        }
+                    ]
+                },
+                "initial": [],
+                "bindableIn": "dynamicCollection"
+            },
+            {
+                "key": "headers",
+                "label": "Headers",
+                "type": "list",
+                "item": {
+                    "type": "record",
+                    "fields": [
+                        {
+                            "key": "key",
+                            "label": "Key",
+                            "type": "text",
+                            "placeholder": "Enter a value",
+                            "bindableIn": "dynamicCollection"
+                        },
+                        {
+                            "key": "value",
+                            "label": "Value",
+                            "type": "text",
+                            "placeholder": "Enter a value",
+                            "bindableIn": "dynamicCollection"
+                        }
+                    ]
+                },
+                "initial": [],
+                "bindableIn": "dynamicCollection"
+            },
+            {
+                "key": "queries",
+                "label": "Query string",
+                "type": "list",
+                "item": {
+                    "type": "record",
+                    "fields": [
+                        {
+                            "key": "key",
+                            "label": "Key",
+                            "type": "text",
+                            "placeholder": "Enter a value",
+                            "bindableIn": "dynamicCollection"
+                        },
+                        {
+                            "key": "value",
+                            "label": "Value",
+                            "type": "text",
+                            "placeholder": "Enter a value",
+                            "bindableIn": "dynamicCollection"
+                        }
+                    ]
+                },
+                "initial": [],
+                "bindableIn": "dynamicCollection"
+            },
+            {
+                "key": "dataType",
+                "label": "Content type",
+                "type": "choice",
+                "choices": [
+                    {
+                        "label": "application/json",
+                        "value": "application/json"
+                    },
+                    {
+                        "label": "application/x-www-form-urlencoded",
+                        "value": "application/x-www-form-urlencoded"
+                    },
+                    {
+                        "label": "application/javascript",
+                        "value": "application/javascript"
+                    },
+                    {
+                        "label": "application/xml",
+                        "value": "application/xml"
+                    },
+                    {
+                        "label": "application/merge-patch+json",
+                        "value": "application/merge-patch+json"
+                    },
+                    {
+                        "label": "multipart/form-data",
+                        "value": "multipart/form-data"
+                    },
+                    {
+                        "label": "text/plain",
+                        "value": "text/plain"
+                    },
+                    {
+                        "label": "text/html",
+                        "value": "text/html"
+                    }
+                ],
+                "visibleWhen": {
+                    "field": "method",
+                    "oneOf": [
+                        "POST",
+                        "PUT",
+                        "PATCH"
+                    ]
+                },
+                "updates": [
+                    {
+                        "equals": "multipart/form-data",
+                        "field": "isThroughServer",
+                        "value": false
+                    }
+                ]
+            },
+            {
+                "key": "resultKey",
+                "label": "Result key",
+                "type": "text",
+                "placeholder": "result.key",
+                "initial": ""
+            },
+            {
+                "key": "isThroughServer",
+                "label": "Proxy request server side (bypass CORS)",
+                "type": "boolean",
+                "initial": false,
+                "disabledWhen": {
+                    "field": "dataType",
+                    "equals": "multipart/form-data"
+                },
+                "help": {
+                    "text": "Multipart form data is sent directly by the browser."
+                },
+                "visibleIn": "dynamic",
+                "bindableIn": "dynamicCollection"
+            },
+            {
+                "key": "isWithCredentials",
+                "label": "Send credentials",
+                "type": "boolean",
+                "initial": false,
+                "visibleWhen": {
+                    "field": "isThroughServer",
+                    "equals": false
+                },
+                "visibleIn": "dynamic"
+            }
+        ],
+        "summary": [
+            {
+                "field": "method",
+                "label": "Method",
+                "empty": "-"
+            },
+            {
+                "field": "url",
+                "label": "URL",
+                "empty": "-"
+            }
+        ]
+    },
+    "actions": [
+        {
+            "code": "apiRequest",
+            "name": "REST API Request",
+            "isAsync": true,
+            "validation": "requiredFields",
+            "form": {
+                "fields": [
+                    {
+                        "key": "method",
+                        "label": "Method",
+                        "type": "choice",
+                        "required": true,
+                        "choices": [
+                            {
+                                "label": "GET",
+                                "value": "GET"
+                            },
+                            {
+                                "label": "POST",
+                                "value": "POST"
+                            },
+                            {
+                                "label": "PUT",
+                                "value": "PUT"
+                            },
+                            {
+                                "label": "PATCH",
+                                "value": "PATCH"
+                            },
+                            {
+                                "label": "DELETE",
+                                "value": "DELETE"
+                            },
+                            {
+                                "label": "OPTIONS",
+                                "value": "OPTIONS"
+                            }
+                        ],
+                        "initial": "POST"
+                    },
+                    {
+                        "key": "url",
+                        "label": "URL",
+                        "type": "text",
+                        "required": true,
+                        "placeholder": "https://api-url.com/endpoint",
+                        "bindable": true
+                    },
+                    {
+                        "key": "useRawBody",
+                        "label": "Use raw body",
+                        "type": "boolean",
+                        "visibleWhen": {
+                            "field": "method",
+                            "oneOf": [
+                                "POST",
+                                "PUT",
+                                "PATCH",
+                                "DELETE"
+                            ]
+                        },
+                        "initial": false,
+                        "updates": [
+                            {
+                                "equals": true,
+                                "field": "data",
+                                "value": null
+                            },
+                            {
+                                "equals": false,
+                                "field": "data",
+                                "value": []
+                            }
+                        ]
+                    },
+                    {
+                        "key": "data",
+                        "label": "Fields",
+                        "type": "list",
+                        "visibleWhen": {
+                            "field": "method",
+                            "oneOf": [
+                                "POST",
+                                "PUT",
+                                "PATCH",
+                                "DELETE"
+                            ]
+                        },
+                        "textWhen": {
+                            "field": "useRawBody",
+                            "equals": true,
+                            "label": "Body"
+                        },
+                        "item": {
+                            "type": "record",
+                            "fields": [
+                                {
+                                    "key": "key",
+                                    "label": "Key",
+                                    "type": "text",
+                                    "placeholder": "Enter a value",
+                                    "bindable": true
+                                },
+                                {
+                                    "key": "value",
+                                    "label": "Value",
+                                    "type": "text",
+                                    "placeholder": "Enter a value",
+                                    "bindable": true
+                                }
+                            ]
+                        },
+                        "initial": [],
+                        "bindable": true
+                    },
+                    {
+                        "key": "headers",
+                        "label": "Headers",
+                        "type": "list",
+                        "item": {
+                            "type": "record",
+                            "fields": [
+                                {
+                                    "key": "key",
+                                    "label": "Key",
+                                    "type": "text",
+                                    "placeholder": "Enter a value",
+                                    "bindable": true
+                                },
+                                {
+                                    "key": "value",
+                                    "label": "Value",
+                                    "type": "text",
+                                    "placeholder": "Enter a value",
+                                    "bindable": true
+                                }
+                            ]
+                        },
+                        "initial": [],
+                        "bindable": true
+                    },
+                    {
+                        "key": "queries",
+                        "label": "Query string",
+                        "type": "list",
+                        "item": {
+                            "type": "record",
+                            "fields": [
+                                {
+                                    "key": "key",
+                                    "label": "Key",
+                                    "type": "text",
+                                    "placeholder": "Enter a value",
+                                    "bindable": true
+                                },
+                                {
+                                    "key": "value",
+                                    "label": "Value",
+                                    "type": "text",
+                                    "placeholder": "Enter a value",
+                                    "bindable": true
+                                }
+                            ]
+                        },
+                        "initial": [],
+                        "bindable": true
+                    },
+                    {
+                        "key": "dataType",
+                        "label": "Content type",
+                        "type": "choice",
+                        "choices": [
+                            {
+                                "label": "application/json",
+                                "value": "application/json"
+                            },
+                            {
+                                "label": "application/x-www-form-urlencoded",
+                                "value": "application/x-www-form-urlencoded"
+                            },
+                            {
+                                "label": "application/javascript",
+                                "value": "application/javascript"
+                            },
+                            {
+                                "label": "application/xml",
+                                "value": "application/xml"
+                            },
+                            {
+                                "label": "application/merge-patch+json",
+                                "value": "application/merge-patch+json"
+                            },
+                            {
+                                "label": "multipart/form-data",
+                                "value": "multipart/form-data"
+                            },
+                            {
+                                "label": "text/plain",
+                                "value": "text/plain"
+                            },
+                            {
+                                "label": "text/html",
+                                "value": "text/html"
+                            }
+                        ],
+                        "visibleWhen": {
+                            "field": "method",
+                            "oneOf": [
+                                "POST",
+                                "PUT",
+                                "PATCH",
+                                "DELETE"
+                            ]
+                        },
+                        "updates": [
+                            {
+                                "equals": "multipart/form-data",
+                                "field": "isThroughServer",
+                                "value": false
+                            }
+                        ]
+                    },
+                    {
+                        "key": "isThroughServer",
+                        "label": "Proxy request server side (bypass CORS)",
+                        "type": "boolean",
+                        "initial": false,
+                        "disabledWhen": {
+                            "field": "dataType",
+                            "equals": "multipart/form-data"
+                        },
+                        "help": {
+                            "text": "Multipart form data is sent directly by the browser."
+                        },
+                        "bindable": true
+                    },
+                    {
+                        "key": "isWithCredentials",
+                        "label": "Send credentials",
+                        "type": "boolean",
+                        "initial": false,
+                        "visibleWhen": {
+                            "field": "isThroughServer",
+                            "equals": false
+                        }
+                    },
+                    {
+                        "key": "useStreaming",
+                        "label": "Stream response",
+                        "type": "boolean",
+                        "initial": false,
+                        "updates": [
+                            {
+                                "equals": true,
+                                "field": "isThroughServer",
+                                "value": false
+                            }
+                        ]
+                    },
+                    {
+                        "key": "streamVariableId",
+                        "label": "Stream variable",
+                        "type": "choice",
+                        "projectVariable": "array",
+                        "placeholder": "Select an array variable",
+                        "visibleWhen": {
+                            "field": "useStreaming",
+                            "equals": true
+                        }
+                    }
+                ]
+            }
+        }
+    ]
+}
